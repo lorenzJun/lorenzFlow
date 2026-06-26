@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.LorenzFlow" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/md_theme_light_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_light_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_light_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/md_theme_light_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_light_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_light_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_light_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/md_theme_light_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_light_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_light_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_light_onTertiaryContainer</item>
+        <item name="colorError">@color/md_theme_light_error</item>
+        <item name="colorOnError">@color/md_theme_light_onError</item>
+        <item name="colorErrorContainer">@color/md_theme_light_errorContainer</item>
+        <item name="colorOnErrorContainer">@color/md_theme_light_onErrorContainer</item>
+        <item name="android:colorBackground">@color/md_theme_light_background</item>
+        <item name="colorOnBackground">@color/md_theme_light_onBackground</item>
+        <item name="colorSurface">@color/md_theme_light_surface</item>
+        <item name="colorOnSurface">@color/md_theme_light_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_light_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_light_onSurfaceVariant</item>
+        <item name="colorOutline">@color/md_theme_light_outline</item>
+        <item name="colorOutlineVariant">@color/md_theme_light_outlineVariant</item>
+        <item name="colorSurfaceInverse">@color/md_theme_light_inverseSurface</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_light_inverseOnSurface</item>
+
+        <!-- iOS-style status bar -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/md_theme_light_surface</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <!-- Dialog overlay style — iOS-inspired -->
+    <style name="Theme.LorenzFlow.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorPrimary">@color/ios_blue</item>
+        <item name="colorSecondary">@color/ios_indigo</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/TextAppearance.LorenzFlow.Dialog.Body</item>
+    </style>
+
+    <style name="TextAppearance.LorenzFlow.Dialog.Body" parent="MaterialAlertDialog.MaterialComponents.Body.Text">
+        <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <!-- iOS-style Rounded Card — thinner, more subtle -->
+    <style name="Widget.LorenzFlow.CardView" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">12dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="strokeColor">@color/ios_opaque_separator</item>
+        <item name="strokeWidth">0.5dp</item>
+    </style>
+
+    <!-- iOS-style card for grouped content -->
+    <style name="Widget.LorenzFlow.CardView.Grouped" parent="Widget.Material3.CardView.Filled">
+        <item name="cardCornerRadius">10dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardBackgroundColor">@color/ios_secondary_grouped_background</item>
+    </style>
+
+    <!-- FAB style (kept for backward compatibility) -->
+    <style name="Widget.LorenzFlow.FAB" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="shapeAppearance">@style/ShapeAppearance.LorenzFlow.FAB</item>
+        <item name="backgroundTint">@color/ios_blue</item>
+        <item name="tint">@android:color/white</item>
+    </style>
+
+    <style name="ShapeAppearance.LorenzFlow.FAB" parent="ShapeAppearance.Material3.Corner.Full">
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <!-- iOS-style bottom navigation -->
+    <style name="Widget.LorenzFlow.BottomNav" parent="Widget.Material3.BottomNavigationView">
+        <item name="backgroundTint">@color/md_theme_light_surface</item>
+        <item name="itemActiveIndicatorStyle">@null</item>
+        <item name="itemTextColor">@color/ios_secondary_label</item>
+        <item name="itemIconTint">@color/ios_secondary_label</item>
+        <item name="labelVisibilityMode">labeled</item>
+    </style>
+
+    <!-- iOS-style toolbar (large title feel) -->
+    <style name="Widget.LorenzFlow.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="titleTextAppearance">@style/TextAppearance.LorenzFlow.Toolbar.Title</item>
+    </style>
+
+    <style name="TextAppearance.LorenzFlow.Toolbar.Title" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textSize">17sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+</resources>

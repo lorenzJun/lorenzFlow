@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lorenz Flow</string>
+
+    <!-- Navigation -->
+    <string name="nav_tasks">Tasks</string>
+    <string name="nav_notes">Notes</string>
+    <string name="nav_profile">Profile</string>
+    <string name="nav_about">About</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Tasks -->
+    <string name="add_task">Add Task</string>
+    <string name="task_title">Title</string>
+    <string name="task_description">Description</string>
+    <string name="task_deadline">Deadline</string>
+    <string name="set_deadline">Set Deadline</string>
+    <string name="no_deadline">No deadline set</string>
+    <string name="completed_tasks">Completed (%1$d)</string>
+    <string name="no_tasks_yet">No tasks yet.\nTap + to add one!</string>
+    <string name="task_deleted">Task deleted</string>
+    <string name="undo">UNDO</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="archive">Archive</string>
+    <string name="unarchive">Restore</string>
+    <string name="view_archive">View Archive</string>
+    <string name="clear_archive">Clear Archive</string>
+    <string name="task_archived">Task archived</string>
+    <string name="no_archived_tasks">No archived tasks.\nArchived tasks will appear here.</string>
+    <string name="export_pdf">Export PDF</string>
+
+    <!-- Notes -->
+    <string name="add_note">Add Note</string>
+    <string name="note_title">Title</string>
+    <string name="note_body">Write something…</string>
+    <string name="no_notes_yet">No notes yet.\nTap + to add one!</string>
+    <string name="note_deleted">Note deleted</string>
+    <string name="note_archived">Note archived</string>
+    <string name="no_archived_notes">No archived notes.\nArchived notes will appear here.</string>
+    <string name="pick_color">Pick a color</string>
+
+    <!-- Profile -->
+    <string name="profile_name">Name</string>
+    <string name="profile_bio">Bio</string>
+    <string name="change_photo">Change Photo</string>
+    <string name="save_profile">Save Profile</string>
+    <string name="profile_saved">Profile saved!</string>
+    <string name="enter_your_name">Enter your name</string>
+    <string name="tell_about_yourself">Tell something about yourself…</string>
+
+    <!-- Theme -->
+    <string name="toggle_theme">Toggle Theme</string>
+
+    <!-- PDF -->
+    <string name="pdf_exported">Tasks exported to Documents folder</string>
+    <string name="pdf_export_failed">Failed to export PDF</string>
+    <string name="pdf_no_tasks">No active tasks to export</string>
+
+    <!-- Notifications -->
+    <string name="notification_channel_name">Task Deadlines</string>
+    <string name="notification_channel_desc">Reminders for upcoming task deadlines</string>
+    <string name="task_deadline_notification">Task deadline: %1$s</string>
+
+    <!-- About -->
+    <string name="about_title">About Lorenz Flow</string>
+    <string name="about_creator">Jun Lorenz C. Masangcay</string>
+    <string name="about_creator_role">Android Developer &amp; Creator</string>
+    <string name="about_creator_education">3rd Year Computer Engineering Student\nBatangas State University, The National Engineering University\nAlangilan Campus</string>
+    <string name="about_creator_location">San Pascual, Batangas</string>
+    <string name="about_creator_facebook">Jun Lorenz C. Masangcay</string>
+    <string name="about_creator_email">junlorenzmasangcay@gmail.com</string>
+    <string name="about_version">Version 1.0.0</string>
+    <string name="about_description">Lorenz Flow is your personal productivity companion. Manage tasks, capture notes, and stay on top of your deadlines — all in one clean, elegant app.\n\nBuilt with ❤ using Material Design 3.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_theme_title">Theme Mode</string>
+    <string name="settings_theme_desc">Choose your preferred app appearance</string>
+    <string name="settings_theme_system">Follow System</string>
+    <string name="settings_theme_light">Light Theme</string>
+    <string name="settings_theme_dark">Dark Theme</string>
+    <string name="settings_notifications_title">Notifications</string>
+    <string name="settings_notifications_desc">Get reminders for task deadlines</string>
+    <string name="settings_notifications_enable">Enable task reminders</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_profile_picture">Profile picture</string>
+    <string name="cd_add_button">Add new item</string>
+    <string name="cd_theme_toggle">Toggle dark/light mode</string>
+    <string name="cd_expand_completed">Toggle completed tasks visibility</string>
+</resources>

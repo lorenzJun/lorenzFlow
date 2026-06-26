@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- iOS Label Colors (Dark Theme) -->
+    <color name="ios_label">#FFFFFF</color>
+    <color name="ios_secondary_label">#98989D</color>
+    <color name="ios_tertiary_label">#48484A</color>
+
+    <!-- iOS Background Colors (Dark Theme) -->
+    <color name="ios_grouped_background">#000000</color>
+    <color name="ios_secondary_grouped_background">#1C1C1E</color>
+    <color name="ios_separator">#38383A</color>
+    <color name="ios_opaque_separator">#38383A</color>
+
+    <!-- iOS System Colors (Dark Theme equivalents) -->
+    <color name="ios_blue">#0A84FF</color>
+    <color name="ios_green">#30D158</color>
+    <color name="ios_indigo">#5E5CE6</color>
+    <color name="ios_orange">#FF9F0A</color>
+    <color name="ios_pink">#FF375F</color>
+    <color name="ios_purple">#BF5AF2</color>
+    <color name="ios_red">#FF453A</color>
+    <color name="ios_teal">#64D2FF</color>
+    <color name="ios_yellow">#FFD60A</color>
+</resources>

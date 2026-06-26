@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_export_pdf"
+        android:icon="@drawable/ic_export_pdf"
+        android:title="@string/export_pdf"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_sort"
+        android:title="Sort Tasks"
+        android:icon="@drawable/ic_sort"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/sort_deadline"
+                android:title="By Deadline" />
+            <item
+                android:id="@+id/sort_newest"
+                android:title="By Newest" />
+            <item
+                android:id="@+id/sort_oldest"
+                android:title="By Oldest" />
+        </menu>
+    </item>
+    <item
+        android:id="@+id/action_view_archive"
+        android:icon="@drawable/ic_archive"
+        android:title="@string/view_archive"
+        app:showAsAction="never" />
+
+</menu>

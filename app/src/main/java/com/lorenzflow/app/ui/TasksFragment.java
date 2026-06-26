@@ -1,0 +1,622 @@
+package com.lorenzflow.app.ui;
+
+import android.app.AlarmManager;
+import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.view.MenuProvider;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
+import com.lorenzflow.app.R;
+import com.lorenzflow.app.data.AppDatabase;
+import com.lorenzflow.app.data.Task;
+import com.lorenzflow.app.data.TaskDao;
+import com.lorenzflow.app.databinding.DialogAddTaskBinding;
+import com.lorenzflow.app.databinding.FragmentTasksBinding;
+import com.lorenzflow.app.notification.AlarmReceiver;
+import com.lorenzflow.app.util.PdfExportUtil;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.Executors;
+
+public class TasksFragment extends Fragment implements TaskAdapter.OnTaskActionListener {
+
+    private FragmentTasksBinding binding;
+    private TaskAdapter activeAdapter;
+    private TaskAdapter completedAdapter;
+    private TaskDao taskDao;
+    private boolean completedExpanded = false;
+    private android.content.SharedPreferences prefs;
+    private String selectedFilterCategory = "All";
+
+    private final SimpleDateFormat sdf =
+            new SimpleDateFormat("MMM dd, yyyy · hh:mm a", Locale.getDefault());
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        binding = FragmentTasksBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        taskDao = AppDatabase.getInstance(requireContext()).taskDao();
+        prefs = requireContext().getSharedPreferences("lorenz_flow_prefs", Context.MODE_PRIVATE);
+
+        setupRecyclerViews();
+        setupSwipeToDelete();
+        setupCompletedSection();
+        setupFab();
+        setupMenu();
+        setupCategoryFilter();
+        
+        binding.btnExportPdf.setOnClickListener(v -> exportPdf());
+        binding.btnClearCompleted.setOnClickListener(v -> clearCompletedTasks());
+
+        loadTasks();
+    }
+
+    private void setupCategoryFilter() {
+        binding.chipGroupFilter.setOnCheckedStateChangeListener((group, checkedIds) -> {
+            if (checkedIds.isEmpty()) return;
+            int checkedId = checkedIds.get(0);
+            if (checkedId == R.id.filter_all) {
+                selectedFilterCategory = "All";
+            } else if (checkedId == R.id.filter_general) {
+                selectedFilterCategory = "General";
+            } else if (checkedId == R.id.filter_work) {
+                selectedFilterCategory = "Work";
+            } else if (checkedId == R.id.filter_personal) {
+                selectedFilterCategory = "Personal";
+            } else if (checkedId == R.id.filter_school) {
+                selectedFilterCategory = "School";
+            } else if (checkedId == R.id.filter_wellness) {
+                selectedFilterCategory = "Wellness";
+            } else if (checkedId == R.id.filter_urgent) {
+                selectedFilterCategory = "Urgent";
+            }
+            loadTasks();
+        });
+    }
+
+    private void setupRecyclerViews() {
+        // Active tasks
+        activeAdapter = new TaskAdapter(this);
+        binding.recyclerActiveTasks.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.recyclerActiveTasks.setAdapter(activeAdapter);
+
+        // Completed tasks
+        completedAdapter = new TaskAdapter(this);
+        binding.recyclerCompletedTasks.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.recyclerCompletedTasks.setAdapter(completedAdapter);
+    }
+
+    private void setupSwipeToDelete() {
+        ItemTouchHelper.SimpleCallback swipeCallback =
+                new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView,
+                                  @NonNull RecyclerView.ViewHolder viewHolder,
+                                  @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                Task task = activeAdapter.getTaskAt(position);
+                if (task == null) return;
+
+                activeAdapter.removeAt(position);
+                updateEmptyState();
+
+                // Cancel alarm
+                cancelAlarm(task);
+
+                Snackbar.make(binding.getRoot(), R.string.task_deleted, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.undo, v -> {
+                            // Re-insert on undo
+                            Executors.newSingleThreadExecutor().execute(() -> {
+                                taskDao.insert(task);
+                                if (task.getDeadline() > 0 && task.getDeadline() > System.currentTimeMillis()) {
+                                    scheduleAlarm(task);
+                                }
+                                requireActivity().runOnUiThread(TasksFragment.this::loadTasks);
+                            });
+                        })
+                        .addCallback(new Snackbar.Callback() {
+                            @Override
+                            public void onDismissed(Snackbar snackbar, int event) {
+                                if (event != DISMISS_EVENT_ACTION) {
+                                    // Actually delete from DB if not undone
+                                    Executors.newSingleThreadExecutor().execute(() -> taskDao.delete(task));
+                                }
+                            }
+                        })
+                        .show();
+            }
+        };
+
+        new ItemTouchHelper(swipeCallback).attachToRecyclerView(binding.recyclerActiveTasks);
+    }
+
+    private void setupCompletedSection() {
+        binding.completedHeader.setOnClickListener(v -> {
+            completedExpanded = !completedExpanded;
+            binding.recyclerCompletedTasks.setVisibility(
+                    completedExpanded ? View.VISIBLE : View.GONE);
+            binding.expandIcon.setImageResource(
+                    completedExpanded ? R.drawable.ic_expand_less : R.drawable.ic_expand_more);
+        });
+    }
+
+    private void setupFab() {
+        binding.fabAddTask.setOnClickListener(v -> showTaskDialog(null));
+    }
+
+    private void setupMenu() {
+        requireActivity().addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.menu_tasks, menu);
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                int id = menuItem.getItemId();
+                if (id == R.id.action_export_pdf) {
+                    exportPdf();
+                    return true;
+                } else if (id == R.id.action_view_archive) {
+                    requireActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new ArchiveTasksFragment())
+                            .addToBackStack(null)
+                            .commit();
+                    return true;
+                } else if (id == R.id.sort_deadline) {
+                    prefs.edit().putInt("pref_tasks_sort", 0).apply();
+                    loadTasks();
+                    return true;
+                } else if (id == R.id.sort_newest) {
+                    prefs.edit().putInt("pref_tasks_sort", 1).apply();
+                    loadTasks();
+                    return true;
+                } else if (id == R.id.sort_oldest) {
+                    prefs.edit().putInt("pref_tasks_sort", 2).apply();
+                    loadTasks();
+                    return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+    }
+
+    private void loadTasks() {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            List<Task> active = taskDao.getActiveTasks();
+            List<Task> completed = taskDao.getCompletedTasks();
+
+            // Filter by category if not "All"
+            if (!selectedFilterCategory.equals("All")) {
+                active.removeIf(t -> !selectedFilterCategory.equalsIgnoreCase(t.getCategory()));
+                completed.removeIf(t -> !selectedFilterCategory.equalsIgnoreCase(t.getCategory()));
+            }
+
+            // Apply Sort
+            sortTasksList(active);
+
+            if (getActivity() == null) return;
+            requireActivity().runOnUiThread(() -> {
+                activeAdapter.setTasks(active);
+                completedAdapter.setTasks(completed);
+
+                // Completed section visibility
+                if (completed.isEmpty()) {
+                    binding.completedSection.setVisibility(View.GONE);
+                } else {
+                    binding.completedSection.setVisibility(View.VISIBLE);
+                    binding.completedLabel.setText(
+                            getString(R.string.completed_tasks, completed.size()));
+                }
+
+                updateEmptyState();
+            });
+        });
+    }
+
+    private void sortTasksList(List<Task> tasks) {
+        int sortType = prefs.getInt("pref_tasks_sort", 0); // 0 = Default (deadline), 1 = Newest, 2 = Oldest
+        if (sortType == 1) {
+            tasks.sort((t1, t2) -> Long.compare(t2.getCreatedAt(), t1.getCreatedAt()));
+        } else if (sortType == 2) {
+            tasks.sort((t1, t2) -> Long.compare(t1.getCreatedAt(), t2.getCreatedAt()));
+        } else {
+            // Default: tasks with deadlines first (ascending), then by newest created
+            tasks.sort((t1, t2) -> {
+                long d1 = t1.getDeadline();
+                long d2 = t2.getDeadline();
+                if (d1 > 0 && d2 > 0) {
+                    return Long.compare(d1, d2);
+                } else if (d1 > 0) {
+                    return -1;
+                } else if (d2 > 0) {
+                    return 1;
+                } else {
+                    return Long.compare(t2.getCreatedAt(), t1.getCreatedAt());
+                }
+            });
+        }
+    }
+
+    private void updateEmptyState() {
+        boolean empty = activeAdapter.getItemCount() == 0
+                && completedAdapter.getItemCount() == 0;
+        binding.emptyState.setVisibility(empty ? View.VISIBLE : View.GONE);
+        updateScrollability();
+    }
+
+    private void updateScrollability() {
+        if (binding == null) return;
+        binding.nestedScrollView.getViewTreeObserver().addOnGlobalLayoutListener(
+                new android.view.ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        if (binding == null) return;
+                        binding.nestedScrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        View child = binding.nestedScrollView.getChildAt(0);
+                        if (child != null) {
+                            boolean canScroll = child.getHeight() > binding.nestedScrollView.getHeight();
+                            if (binding.nestedScrollView.isNestedScrollingEnabled() != canScroll) {
+                                binding.nestedScrollView.setNestedScrollingEnabled(canScroll);
+                            }
+                        }
+                    }
+                });
+    }
+
+    // ==================== ADD TASK DIALOG ====================
+
+    private void showTaskDialog(@Nullable Task existingTask) {
+        DialogAddTaskBinding dialogBinding = DialogAddTaskBinding.inflate(getLayoutInflater());
+
+        final long[] selectedDeadline = {existingTask != null ? existingTask.getDeadline() : 0};
+
+        if (existingTask != null) {
+            dialogBinding.editTaskTitle.setText(existingTask.getTitle());
+            dialogBinding.editTaskDescription.setText(existingTask.getDescription());
+            if (existingTask.getDeadline() > 0) {
+                dialogBinding.btnSetDeadline.setText(sdf.format(new Date(existingTask.getDeadline())));
+            }
+
+            // Pre-select category
+            String category = existingTask.getCategory();
+            if (category != null) {
+                switch (category) {
+                    case "Work":
+                        dialogBinding.chipWork.setChecked(true);
+                        break;
+                    case "Personal":
+                        dialogBinding.chipPersonal.setChecked(true);
+                        break;
+                    case "School":
+                        dialogBinding.chipSchool.setChecked(true);
+                        break;
+                    case "Wellness":
+                        dialogBinding.chipWellness.setChecked(true);
+                        break;
+                    case "Urgent":
+                        dialogBinding.chipUrgent.setChecked(true);
+                        break;
+                    case "General":
+                    default:
+                        dialogBinding.chipGeneral.setChecked(true);
+                        break;
+                }
+            }
+        }
+
+        // Deadline picker button
+        dialogBinding.btnSetDeadline.setOnClickListener(v -> {
+            Calendar cal = Calendar.getInstance();
+            if (selectedDeadline[0] > 0) {
+                cal.setTimeInMillis(selectedDeadline[0]);
+            }
+            new DatePickerDialog(requireContext(), (view, year, month, day) -> {
+                Calendar deadlineCal = Calendar.getInstance();
+                deadlineCal.set(year, month, day);
+
+                // Also pick time
+                new TimePickerDialog(requireContext(), (timeView, hour, minute) -> {
+                    deadlineCal.set(Calendar.HOUR_OF_DAY, hour);
+                    deadlineCal.set(Calendar.MINUTE, minute);
+                    deadlineCal.set(Calendar.SECOND, 0);
+                    selectedDeadline[0] = deadlineCal.getTimeInMillis();
+                    dialogBinding.btnSetDeadline.setText(sdf.format(new Date(selectedDeadline[0])));
+                }, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), false).show();
+            }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show();
+        });
+
+        String titleStr = existingTask != null ? "Edit Task" : getString(R.string.add_task);
+
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(titleStr)
+                .setView(dialogBinding.getRoot())
+                .setPositiveButton(R.string.save, (dialog, which) -> {
+                    String title = dialogBinding.editTaskTitle.getText() != null
+                            ? dialogBinding.editTaskTitle.getText().toString().trim() : "";
+                    String desc = dialogBinding.editTaskDescription.getText() != null
+                            ? dialogBinding.editTaskDescription.getText().toString().trim() : "";
+
+                    if (title.isEmpty()) return;
+
+                    // Get selected category
+                    String category = "General";
+                    int checkedChipId = dialogBinding.chipGroupCategory.getCheckedChipId();
+                    if (checkedChipId == R.id.chip_work) {
+                        category = "Work";
+                    } else if (checkedChipId == R.id.chip_personal) {
+                        category = "Personal";
+                    } else if (checkedChipId == R.id.chip_school) {
+                        category = "School";
+                    } else if (checkedChipId == R.id.chip_wellness) {
+                        category = "Wellness";
+                    } else if (checkedChipId == R.id.chip_urgent) {
+                        category = "Urgent";
+                    }
+
+                    Task task = existingTask != null ? existingTask : new Task();
+                    task.setTitle(title);
+                    task.setDescription(desc);
+                    task.setDeadline(selectedDeadline[0]);
+                    task.setCategory(category);
+
+                    Executors.newSingleThreadExecutor().execute(() -> {
+                        if (existingTask != null) {
+                            taskDao.update(task);
+                            cancelAlarm(task);
+                            if (task.getDeadline() > System.currentTimeMillis() && !task.isCompleted()) {
+                                scheduleAlarm(task);
+                            }
+                        } else {
+                            long id = taskDao.insert(task);
+                            task.setId(id);
+                            if (task.getDeadline() > System.currentTimeMillis()) {
+                                scheduleAlarm(task);
+                            }
+                        }
+
+                        if (getActivity() != null) {
+                            requireActivity().runOnUiThread(this::loadTasks);
+                        }
+                    });
+                })
+                .setNegativeButton(R.string.cancel, null);
+
+        if (existingTask != null) {
+            builder.setNeutralButton(R.string.delete, (dialog, which) -> {
+                deleteTaskConfirm(existingTask);
+            });
+        }
+
+        builder.show();
+    }
+
+    private void deleteTaskConfirm(Task task) {
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.delete)
+                .setMessage("Delete task \"" + task.getTitle() + "\"?")
+                .setPositiveButton(R.string.delete, (dialog, which) -> {
+                    Executors.newSingleThreadExecutor().execute(() -> {
+                        taskDao.delete(task);
+                        cancelAlarm(task);
+                        if (getActivity() != null) {
+                            requireActivity().runOnUiThread(() -> {
+                                Toast.makeText(requireContext(), R.string.task_deleted, Toast.LENGTH_SHORT).show();
+                                loadTasks();
+                            });
+                        }
+                    });
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    // ==================== ALARM MANAGEMENT ====================
+
+    private void scheduleAlarm(Task task) {
+        Context ctx = requireContext().getApplicationContext();
+        AlarmManager alarmManager = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager == null) return;
+
+        Intent intent = new Intent(ctx, AlarmReceiver.class);
+        intent.putExtra(AlarmReceiver.EXTRA_TASK_ID, (int) task.getId());
+        intent.putExtra(AlarmReceiver.EXTRA_TASK_TITLE, task.getTitle());
+
+        PendingIntent pi = PendingIntent.getBroadcast(
+                ctx, (int) task.getId(), intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (alarmManager.canScheduleExactAlarms()) {
+                    alarmManager.setExactAndAllowWhileIdle(
+                            AlarmManager.RTC_WAKEUP, task.getDeadline(), pi);
+                } else {
+                    alarmManager.setAndAllowWhileIdle(
+                            AlarmManager.RTC_WAKEUP, task.getDeadline(), pi);
+                }
+            } else {
+                alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP, task.getDeadline(), pi);
+            }
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            // Fallback to inexact alarm if permission is missing/revoked
+            alarmManager.setAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP, task.getDeadline(), pi);
+        }
+    }
+
+    private void cancelAlarm(Task task) {
+        Context ctx = requireContext().getApplicationContext();
+        AlarmManager alarmManager = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager == null) return;
+
+        Intent intent = new Intent(ctx, AlarmReceiver.class);
+        PendingIntent pi = PendingIntent.getBroadcast(
+                ctx, (int) task.getId(), intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        alarmManager.cancel(pi);
+    }
+
+    // ==================== TASK CALLBACKS ====================
+
+    @Override
+    public void onTaskCheckedChanged(Task task, boolean isChecked) {
+        task.setCompleted(isChecked);
+        Executors.newSingleThreadExecutor().execute(() -> {
+            taskDao.update(task);
+            if (isChecked) {
+                cancelAlarm(task);
+            } else if (task.getDeadline() > System.currentTimeMillis()) {
+                scheduleAlarm(task);
+            }
+            if (getActivity() != null) {
+                requireActivity().runOnUiThread(this::loadTasks);
+            }
+        });
+    }
+
+    @Override
+    public void onTaskClick(Task task) {
+        showTaskDialog(task);
+    }
+
+    @Override
+    public void onTaskDelete(Task task) {
+        deleteTaskConfirm(task);
+    }
+
+    @Override
+    public void onTaskShare(Task task) {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        
+        String shareContent = task.getTitle();
+        if (task.getDescription() != null && !task.getDescription().isEmpty()) {
+            shareContent += "\n\n" + task.getDescription();
+        }
+        if (task.getDeadline() > 0) {
+            shareContent += "\n\nDeadline: " + sdf.format(new Date(task.getDeadline()));
+        }
+        
+        sendIntent.putExtra(Intent.EXTRA_TEXT, shareContent);
+        sendIntent.setType("text/plain");
+        Intent shareIntent = Intent.createChooser(sendIntent, "Transfer Task to...");
+        startActivity(shareIntent);
+    }
+
+    @Override
+    public void onTaskArchive(Task task) {
+        task.setArchived(true);
+        Executors.newSingleThreadExecutor().execute(() -> {
+            taskDao.update(task);
+            cancelAlarm(task);
+            if (getActivity() == null) return;
+            requireActivity().runOnUiThread(() -> {
+                loadTasks();
+                Snackbar.make(binding.getRoot(), R.string.task_archived, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.undo, v -> {
+                            task.setArchived(false);
+                            Executors.newSingleThreadExecutor().execute(() -> {
+                                taskDao.update(task);
+                                if (task.getDeadline() > 0 && task.getDeadline() > System.currentTimeMillis() && !task.isCompleted()) {
+                                    scheduleAlarm(task);
+                                }
+                                if (getActivity() != null) {
+                                    requireActivity().runOnUiThread(TasksFragment.this::loadTasks);
+                                }
+                            });
+                        })
+                        .show();
+            });
+        });
+    }
+
+    private void clearCompletedTasks() {
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Clear Completed Tasks")
+                .setMessage("Are you sure you want to permanently delete all completed tasks?")
+                .setPositiveButton("Clear All", (dialog, which) -> {
+                    Executors.newSingleThreadExecutor().execute(() -> {
+                        taskDao.deleteAllCompleted();
+                        if (getActivity() != null) {
+                            requireActivity().runOnUiThread(this::loadTasks);
+                        }
+                    });
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    // ==================== PDF EXPORT ====================
+
+    private void exportPdf() {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            List<Task> tasks = taskDao.getActiveTasks();
+
+            if (tasks.isEmpty()) {
+                if (getActivity() != null) {
+                    requireActivity().runOnUiThread(() ->
+                            Toast.makeText(requireContext(), R.string.pdf_no_tasks, Toast.LENGTH_SHORT).show());
+                }
+                return;
+            }
+
+            boolean success = PdfExportUtil.exportTasks(requireContext(), tasks);
+
+            if (getActivity() != null) {
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(requireContext(),
+                            success ? R.string.pdf_exported : R.string.pdf_export_failed,
+                            Toast.LENGTH_LONG).show();
+                });
+            }
+        });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+}

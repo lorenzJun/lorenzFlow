@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="0dp"
+    app:strokeWidth="0dp"
+    app:cardBackgroundColor="?attr/colorSurface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="14dp">
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/checkbox_task"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:buttonTint="@color/ios_blue" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="12dp">
+
+            <TextView
+                android:id="@+id/text_task_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="17sp"
+                android:fontFamily="sans-serif" />
+
+            <TextView
+                android:id="@+id/text_task_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="@color/ios_secondary_label"
+                android:textSize="15sp"
+                android:fontFamily="sans-serif"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/deadline_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_calendar"
+                    app:tint="@color/ios_blue"
+                    android:importantForAccessibility="no" />
+
+                <TextView
+                    android:id="@+id/text_task_deadline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:textColor="@color/ios_blue"
+                    android:textSize="13sp"
+                    android:fontFamily="sans-serif" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/text_task_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/badge_background"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="2dp"
+                android:textColor="@color/white"
+                android:textSize="11sp"
+                android:fontFamily="sans-serif-medium"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btn_share_task"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_share"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="@color/ios_secondary_label"
+            android:contentDescription="Share or transfer task"
+            android:layout_marginStart="8dp" />
+
+        <ImageButton
+            android:id="@+id/btn_archive_task"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_archive"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="@color/ios_secondary_label"
+            android:contentDescription="@string/archive"
+            android:layout_marginStart="4dp" />
+
+        <ImageButton
+            android:id="@+id/btn_delete_task"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_delete"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="@color/ios_secondary_label"
+            android:contentDescription="@string/delete"
+            android:layout_marginStart="4dp" />
+
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

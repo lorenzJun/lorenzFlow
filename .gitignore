@@ -1,0 +1,29 @@
+# Built artifacts
+bin/
+gen/
+out/
+build/
+app/build/
+.gradle/
+
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Gradle local properties
+local.properties
+
+# Log files
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# User-specific configuration
+.navigation/
+captures/
+.externalNativeBuild/
+.cxx/
