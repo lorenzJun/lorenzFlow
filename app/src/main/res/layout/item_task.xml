@@ -4,32 +4,38 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    app:cardCornerRadius="12dp"
+    android:layout_marginBottom="@dimen/lf_spacing_md"
+    app:cardCornerRadius="@dimen/lf_corner_card"
     app:cardElevation="0dp"
     app:strokeWidth="0dp"
-    app:cardBackgroundColor="?attr/colorSurface">
+    app:cardBackgroundColor="@android:color/transparent"
+    android:foreground="?attr/selectableItemBackground">
 
+    <!-- Painted background: the adapter swaps this view's background resource
+         per category (card_pastel_*). Its 24dp corners match the card's own,
+         so no outline clipping is needed. -->
     <LinearLayout
+        android:id="@+id/task_card_bg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/card_pastel_neutral"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="16dp"
-        android:paddingVertical="14dp">
+        android:paddingVertical="16dp">
 
         <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/checkbox_task"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:buttonTint="@color/ios_blue" />
+            app:buttonTint="@color/lf_accent" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:layout_marginStart="12dp">
+            android:layout_marginStart="@dimen/lf_spacing_md">
 
             <TextView
                 android:id="@+id/text_task_title"
@@ -37,8 +43,9 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="17sp"
+                android:textStyle="bold"
+                android:textColor="@color/lf_text_primary"
+                android:textSize="16sp"
                 android:fontFamily="sans-serif" />
 
             <TextView
@@ -48,8 +55,8 @@
                 android:layout_marginTop="2dp"
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:textColor="@color/ios_secondary_label"
-                android:textSize="15sp"
+                android:textColor="@color/lf_text_secondary"
+                android:textSize="13sp"
                 android:fontFamily="sans-serif"
                 android:visibility="gone" />
 
@@ -59,23 +66,23 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="@dimen/lf_spacing_sm"
                 android:visibility="gone">
 
                 <ImageView
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
                     android:src="@drawable/ic_calendar"
-                    app:tint="@color/ios_blue"
+                    app:tint="@color/lf_text_secondary"
                     android:importantForAccessibility="no" />
 
                 <TextView
                     android:id="@+id/text_task_deadline"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:textColor="@color/ios_blue"
-                    android:textSize="13sp"
+                    android:layout_marginStart="@dimen/lf_spacing_sm"
+                    android:textColor="@color/lf_text_secondary"
+                    android:textSize="12sp"
                     android:fontFamily="sans-serif" />
 
             </LinearLayout>
@@ -84,11 +91,11 @@
                 android:id="@+id/text_task_category"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="@dimen/lf_spacing_sm"
                 android:background="@drawable/badge_background"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="2dp"
-                android:textColor="@color/white"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="3dp"
+                android:textColor="@color/lf_text_primary"
                 android:textSize="11sp"
                 android:fontFamily="sans-serif-medium"
                 android:visibility="gone" />
@@ -101,9 +108,9 @@
             android:layout_height="40dp"
             android:src="@drawable/ic_share"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="@color/ios_secondary_label"
+            app:tint="@color/lf_text_secondary"
             android:contentDescription="Share or transfer task"
-            android:layout_marginStart="8dp" />
+            android:layout_marginStart="@dimen/lf_spacing_sm" />
 
         <ImageButton
             android:id="@+id/btn_archive_task"
@@ -111,9 +118,9 @@
             android:layout_height="40dp"
             android:src="@drawable/ic_archive"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="@color/ios_secondary_label"
+            app:tint="@color/lf_text_secondary"
             android:contentDescription="@string/archive"
-            android:layout_marginStart="4dp" />
+            android:layout_marginStart="@dimen/lf_spacing_sm" />
 
         <ImageButton
             android:id="@+id/btn_delete_task"
@@ -121,10 +128,9 @@
             android:layout_height="40dp"
             android:src="@drawable/ic_delete"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="@color/ios_secondary_label"
+            app:tint="@color/lf_text_secondary"
             android:contentDescription="@string/delete"
-            android:layout_marginStart="4dp" />
-
+            android:layout_marginStart="@dimen/lf_spacing_sm" />
 
     </LinearLayout>
 

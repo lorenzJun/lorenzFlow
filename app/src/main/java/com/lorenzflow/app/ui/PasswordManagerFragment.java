@@ -49,7 +49,7 @@ public class PasswordManagerFragment extends Fragment implements PasswordAdapter
                     isAuthenticated = true;
                     loadPasswords();
                 } else {
-                    Toast.makeText(requireContext(), "Authentication failed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), R.string.auth_failed, Toast.LENGTH_SHORT).show();
                     getParentFragmentManager().popBackStack();
                 }
             });
@@ -109,7 +109,8 @@ public class PasswordManagerFragment extends Fragment implements PasswordAdapter
     private void authenticateUser() {
         KeyguardManager km = (KeyguardManager) requireContext().getSystemService(Context.KEYGUARD_SERVICE);
         if (km != null && km.isDeviceSecure()) {
-            Intent authIntent = km.createConfirmDeviceCredentialIntent("Lorenz Flow Secure Lock", "Authenticate to access Password Manager");
+            Intent authIntent = km.createConfirmDeviceCredentialIntent(
+                    getString(R.string.pm_lock_title), getString(R.string.pm_lock_desc));
             if (authIntent != null) {
                 authLauncher.launch(authIntent);
             } else {
@@ -132,28 +133,23 @@ public class PasswordManagerFragment extends Fragment implements PasswordAdapter
     }
 
     private void showSetupPinDialog() {
-        android.view.View dialogView = getLayoutInflater().inflate(R.layout.dialog_edit_durations, null);
-        com.google.android.material.textfield.TextInputLayout layoutFocus = dialogView.findViewById(R.id.layout_focus_mins);
-        com.google.android.material.textfield.TextInputLayout layoutShort = dialogView.findViewById(R.id.layout_short_mins);
-        com.google.android.material.textfield.TextInputLayout layoutLong = dialogView.findViewById(R.id.layout_long_mins);
-        
-        // Repurpose the durations dialog view so we don't need to write another XML just for a simple input
-        layoutFocus.setHint("Set 4-Digit Master PIN");
-        layoutShort.setVisibility(View.GONE);
-        layoutLong.setVisibility(View.GONE);
+        android.view.View dialogView = getLayoutInflater().inflate(R.layout.dialog_master_pin, null);
+        com.google.android.material.textfield.TextInputLayout layoutMasterPin =
+                dialogView.findViewById(R.id.layout_master_pin);
+        com.google.android.material.textfield.TextInputEditText editPin =
+                dialogView.findViewById(R.id.edit_master_pin);
 
-        com.google.android.material.textfield.TextInputEditText editPin = dialogView.findViewById(R.id.edit_focus_mins);
-        editPin.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+        layoutMasterPin.setHint(getString(R.string.pm_pin_hint_setup));
 
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Secure Setup")
-                .setMessage("Your device is not secured. Please set a custom Master PIN to secure your passwords.")
+                .setTitle(getString(R.string.secure_setup_title))
+                .setMessage(getString(R.string.secure_setup_message))
                 .setView(dialogView)
                 .setCancelable(false)
-                .setPositiveButton("Set PIN", (dialog, which) -> {
+                .setPositiveButton(getString(R.string.set_pin), (dialog, which) -> {
                     String pin = editPin.getText() != null ? editPin.getText().toString().trim() : "";
                     if (pin.length() < 4) {
-                        Toast.makeText(requireContext(), "PIN must be at least 4 digits", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.pin_too_short, Toast.LENGTH_SHORT).show();
                         getParentFragmentManager().popBackStack();
                         return;
                     }
@@ -162,44 +158,40 @@ public class PasswordManagerFragment extends Fragment implements PasswordAdapter
                         prefs.edit().putString("pm_master_pin_hash", hash).apply();
                         isAuthenticated = true;
                         loadPasswords();
-                        Toast.makeText(requireContext(), "Master PIN Set successfully", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.pin_set_success, Toast.LENGTH_SHORT).show();
                     } else {
                         getParentFragmentManager().popBackStack();
                     }
                 })
-                .setNegativeButton("Cancel", (dialog, which) -> getParentFragmentManager().popBackStack())
+                .setNegativeButton(R.string.cancel, (dialog, which) -> getParentFragmentManager().popBackStack())
                 .show();
     }
 
     private void showEnterPinDialog(String savedHash) {
-        android.view.View dialogView = getLayoutInflater().inflate(R.layout.dialog_edit_durations, null);
-        com.google.android.material.textfield.TextInputLayout layoutFocus = dialogView.findViewById(R.id.layout_focus_mins);
-        com.google.android.material.textfield.TextInputLayout layoutShort = dialogView.findViewById(R.id.layout_short_mins);
-        com.google.android.material.textfield.TextInputLayout layoutLong = dialogView.findViewById(R.id.layout_long_mins);
-        
-        layoutFocus.setHint("Enter Master PIN");
-        layoutShort.setVisibility(View.GONE);
-        layoutLong.setVisibility(View.GONE);
+        android.view.View dialogView = getLayoutInflater().inflate(R.layout.dialog_master_pin, null);
+        com.google.android.material.textfield.TextInputLayout layoutMasterPin =
+                dialogView.findViewById(R.id.layout_master_pin);
+        com.google.android.material.textfield.TextInputEditText editPin =
+                dialogView.findViewById(R.id.edit_master_pin);
 
-        com.google.android.material.textfield.TextInputEditText editPin = dialogView.findViewById(R.id.edit_focus_mins);
-        editPin.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+        layoutMasterPin.setHint(getString(R.string.pm_pin_hint_enter));
 
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Unlock Password Manager")
+                .setTitle(getString(R.string.unlock_password_manager))
                 .setView(dialogView)
                 .setCancelable(false)
-                .setPositiveButton("Unlock", (dialog, which) -> {
+                .setPositiveButton(getString(R.string.unlock), (dialog, which) -> {
                     String pin = editPin.getText() != null ? editPin.getText().toString().trim() : "";
                     String hash = hashString(pin);
                     if (hash != null && hash.equals(savedHash)) {
                         isAuthenticated = true;
                         loadPasswords();
                     } else {
-                        Toast.makeText(requireContext(), "Incorrect PIN", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.incorrect_pin, Toast.LENGTH_SHORT).show();
                         getParentFragmentManager().popBackStack();
                     }
                 })
-                .setNegativeButton("Cancel", (dialog, which) -> getParentFragmentManager().popBackStack())
+                .setNegativeButton(R.string.cancel, (dialog, which) -> getParentFragmentManager().popBackStack())
                 .show();
     }
 
@@ -238,11 +230,11 @@ public class PasswordManagerFragment extends Fragment implements PasswordAdapter
         dialogBinding.btnGeneratePassword.setOnClickListener(v -> {
             String securePass = generateSecurePassword();
             dialogBinding.editPasswordVal.setText(securePass);
-            Toast.makeText(requireContext(), "Secure Password generated!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), R.string.secure_password_generated, Toast.LENGTH_SHORT).show();
         });
 
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Add Credential")
+                .setTitle(getString(R.string.add_credential))
                 .setView(dialogBinding.getRoot())
                 .setPositiveButton("Save", (dialog, which) -> {
                     String title = dialogBinding.editPasswordTitle.getText() != null ? dialogBinding.editPasswordTitle.getText().toString().trim() : "";
@@ -250,7 +242,7 @@ public class PasswordManagerFragment extends Fragment implements PasswordAdapter
                     String password = dialogBinding.editPasswordVal.getText() != null ? dialogBinding.editPasswordVal.getText().toString().trim() : "";
 
                     if (title.isEmpty() || username.isEmpty() || password.isEmpty()) {
-                        Toast.makeText(requireContext(), "All fields must be filled", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.pm_fields_required, Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -269,7 +261,7 @@ public class PasswordManagerFragment extends Fragment implements PasswordAdapter
                             }
                         });
                     } else {
-                        Toast.makeText(requireContext(), "Error encrypting password", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.error_encrypting_password, Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -307,9 +299,9 @@ public class PasswordManagerFragment extends Fragment implements PasswordAdapter
     @Override
     public void onDeletePassword(PasswordEntry entry) {
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Delete Password")
-                .setMessage("Are you sure you want to permanently delete credentials for \"" + entry.getTitle() + "\"?")
-                .setPositiveButton("Delete", (dialog, which) -> {
+                .setTitle(getString(R.string.pm_delete_password_title))
+                .setMessage(getString(R.string.pm_delete_password_confirm, entry.getTitle()))
+                .setPositiveButton(getString(R.string.delete), (dialog, which) -> {
                     Executors.newSingleThreadExecutor().execute(() -> {
                         passwordDao.delete(entry);
                         if (getActivity() != null) {

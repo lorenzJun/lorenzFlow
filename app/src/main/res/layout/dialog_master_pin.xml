@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <!-- Master PIN input for securing the password vault -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_master_pin"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/pm_pin_hint_setup">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_master_pin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberPassword"
+            android:maxLines="1"
+            android:fontFamily="sans-serif"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+</LinearLayout>

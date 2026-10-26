@@ -15,8 +15,6 @@ import com.lorenzflow.app.R;
 public class NotificationHelper {
 
     public static final String CHANNEL_ID = "Task_Deadlines";
-    private static final String CHANNEL_NAME = "Task Deadlines";
-    private static final String CHANNEL_DESC = "Reminders for upcoming task deadlines";
 
     /**
      * Creates the notification channel. Safe to call multiple times;
@@ -25,10 +23,10 @@ public class NotificationHelper {
     public static void createNotificationChannel(Context context) {
         NotificationChannel channel = new NotificationChannel(
                 CHANNEL_ID,
-                CHANNEL_NAME,
+                context.getString(R.string.notification_channel_name),
                 NotificationManager.IMPORTANCE_HIGH
         );
-        channel.setDescription(CHANNEL_DESC);
+        channel.setDescription(context.getString(R.string.notification_channel_desc));
         channel.enableVibration(true);
         channel.enableLights(true);
 
@@ -45,6 +43,20 @@ public class NotificationHelper {
      * @param taskId     Unique task ID used as notification ID
      * @param taskTitle  Title of the task to display
      */
+    /**
+     * Opens the system screen where the user can grant app notifications.
+     * Safe to call on any API 26+ device (app minSdk).
+     */
+    public static void openNotificationSettings(Context context) {
+        Intent intent = new Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                .putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, context.getPackageName());
+        try {
+            context.startActivity(intent);
+        } catch (android.content.ActivityNotFoundException | SecurityException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void showTaskNotification(Context context, int taskId, String taskTitle) {
         createNotificationChannel(context);
 

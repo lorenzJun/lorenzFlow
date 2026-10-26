@@ -74,7 +74,7 @@ public class ArchiveNotesFragment extends Fragment {
 
     private void showNoteOptions(Note note) {
         String label = (note.getTitle() != null && !note.getTitle().isEmpty())
-                ? note.getTitle() : "this note";
+                ? note.getTitle() : getString(R.string.this_note);
         String[] options = {getString(R.string.unarchive), getString(R.string.delete)};
 
         new MaterialAlertDialogBuilder(requireContext())
@@ -105,7 +105,7 @@ public class ArchiveNotesFragment extends Fragment {
     private void confirmDeleteNote(Note note, String label) {
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.delete)
-                .setMessage("Permanently delete \"" + label + "\"?")
+                .setMessage(getString(R.string.permanently_delete_confirm, label))
                 .setPositiveButton(R.string.delete, (d, w) ->
                         Executors.newSingleThreadExecutor().execute(() -> {
                             noteDao.delete(note);

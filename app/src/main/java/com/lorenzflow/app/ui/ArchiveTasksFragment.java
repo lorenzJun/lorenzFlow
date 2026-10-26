@@ -86,7 +86,7 @@ public class ArchiveTasksFragment extends Fragment {
     private void deleteArchivedTask(Task task) {
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.delete)
-                .setMessage("Permanently delete \"" + task.getTitle() + "\"?")
+                .setMessage(getString(R.string.permanently_delete_confirm, task.getTitle()))
                 .setPositiveButton(R.string.delete, (dialog, which) ->
                         Executors.newSingleThreadExecutor().execute(() -> {
                             taskDao.delete(task);
@@ -101,7 +101,7 @@ public class ArchiveTasksFragment extends Fragment {
     private void confirmClearArchive() {
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.clear_archive)
-                .setMessage("Permanently delete all archived tasks?")
+                .setMessage(getString(R.string.delete_all_archived_tasks_confirm))
                 .setPositiveButton(R.string.clear_archive, (dialog, which) ->
                         Executors.newSingleThreadExecutor().execute(() -> {
                             taskDao.deleteAllArchived();

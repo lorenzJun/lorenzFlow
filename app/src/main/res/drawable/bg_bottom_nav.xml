@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Soft & airy bottom-nav background: surface fill, 24dp rounded TOP corners
+     only (bottom edge sits flush against the screen), no shadow. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/lf_surface" />
+    <corners
+        android:topLeftRadius="@dimen/lf_corner_card"
+        android:topRightRadius="@dimen/lf_corner_card"
+        android:bottomLeftRadius="0dp"
+        android:bottomRightRadius="0dp" />
+</shape>

@@ -1,15 +1,19 @@
 package com.lorenzflow.app.ui;
 
+import android.content.Context;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.lorenzflow.app.R;
 import com.lorenzflow.app.data.Task;
 import com.lorenzflow.app.databinding.ItemTaskBinding;
+import com.lorenzflow.app.util.AnimUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -70,6 +74,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         holder.bind(tasks.get(position));
+        holder.fadeIn(position);
     }
 
     @Override
@@ -77,15 +82,46 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         return tasks.size();
     }
 
+    /** Maps a category to its pastel gradient card background drawable. */
+    private int categoryCardBackground(String category) {
+        if (category == null) return R.drawable.card_pastel_neutral;
+        switch (category) {
+            case "Work":
+                return R.drawable.card_pastel_lilac;
+            case "Personal":
+                return R.drawable.card_pastel_mint;
+            case "School":
+                return R.drawable.card_pastel_peach;
+            case "Wellness":
+                return R.drawable.card_pastel_sky;
+            case "Urgent":
+                return R.drawable.card_pastel_rose;
+            case "General":
+            default:
+                return R.drawable.card_pastel_neutral;
+        }
+    }
+
     class TaskViewHolder extends RecyclerView.ViewHolder {
         private final ItemTaskBinding binding;
+        private boolean animatedIn;
 
         TaskViewHolder(ItemTaskBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
 
+        /** Subtle fade-in, run once per ViewHolder instance. */
+        void fadeIn(int position) {
+            animatedIn = AnimUtil.fadeInOnce(binding.getRoot(), position, animatedIn);
+        }
+
         void bind(Task task) {
+            Context ctx = binding.getRoot().getContext();
+
+            // Pastel gradient card background per category (24dp rounded)
+            binding.taskCardBg.setBackgroundResource(categoryCardBackground(task.getCategory()));
+
             // Title
             binding.textTaskTitle.setText(task.getTitle());
 
@@ -122,36 +158,30 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 binding.textTaskCategory.setVisibility(View.VISIBLE);
 
                 int textColor;
-                int bgColor;
                 switch (task.getCategory()) {
                     case "Work":
-                        textColor = 0xFF5856D6; // Indigo
-                        bgColor = 0x1A5856D6;
+                        textColor = R.color.lf_pastel_lilac_deep;
                         break;
                     case "Personal":
-                        textColor = 0xFF34C759; // Green
-                        bgColor = 0x1A34C759;
+                        textColor = R.color.lf_pastel_mint_deep;
                         break;
                     case "School":
-                        textColor = 0xFFFF9500; // Orange
-                        bgColor = 0x1AFF9500;
+                        textColor = R.color.lf_pastel_peach_deep;
                         break;
                     case "Wellness":
-                        textColor = 0xFF5AC8FA; // Teal
-                        bgColor = 0x1A5AC8FA;
+                        textColor = R.color.lf_pastel_sky_deep;
                         break;
                     case "Urgent":
-                        textColor = 0xFFFF3B30; // Red
-                        bgColor = 0x1AFF3B30;
+                        textColor = R.color.lf_pastel_rose_deep;
                         break;
                     case "General":
                     default:
-                        textColor = 0xFF8E8E93; // Gray
-                        bgColor = 0x1A8E8E93;
+                        textColor = R.color.lf_text_secondary;
                         break;
                 }
-                binding.textTaskCategory.setTextColor(textColor);
-                binding.textTaskCategory.getBackground().setTint(bgColor);
+                binding.textTaskCategory.setTextColor(ContextCompat.getColor(ctx, textColor));
+                binding.textTaskCategory.getBackground()
+                        .setTint(ContextCompat.getColor(ctx, R.color.lf_badge_tint));
             } else {
                 binding.textTaskCategory.setVisibility(View.GONE);
             }

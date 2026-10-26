@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/ios_grouped_background"
+    android:background="@color/lf_background"
     android:fillViewport="true">
 
     <LinearLayout
@@ -14,7 +14,7 @@
         android:gravity="center_horizontal"
         android:padding="24dp">
 
-        <!-- Mode Toggle Group -->
+        <!-- Mode Toggle Group (pill segment) -->
         <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/toggle_group_modes"
             android:layout_width="wrap_content"
@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:text="Focus"
                 android:textSize="14sp"
-                app:cornerRadius="8dp" />
+                app:cornerRadius="24dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_mode_short"
@@ -39,7 +39,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Short Break"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                app:cornerRadius="24dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_mode_long"
@@ -48,11 +49,11 @@
                 android:layout_height="wrap_content"
                 android:text="Long Break"
                 android:textSize="14sp"
-                app:cornerRadius="8dp" />
+                app:cornerRadius="24dp" />
 
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
-        <!-- Circular Countdown Progress Container -->
+        <!-- ==================== Big soft circular countdown ==================== -->
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -63,11 +64,11 @@
                 android:id="@+id/pomodoro_progress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:indicatorSize="260dp"
-                app:trackThickness="16dp"
-                app:indicatorColor="@color/ios_blue"
-                app:trackColor="@color/ios_opaque_separator"
-                app:trackCornerRadius="8dp"
+                app:indicatorSize="280dp"
+                app:trackThickness="20dp"
+                app:indicatorColor="@color/lf_accent"
+                app:trackColor="@color/lf_pastel_lilac"
+                app:trackCornerRadius="10dp"
                 android:progress="100"
                 app:indicatorDirectionCircular="counterclockwise" />
 
@@ -83,19 +84,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="25:00"
-                    android:textSize="54sp"
-                    android:textColor="?attr/colorOnSurface"
-                    android:fontFamily="sans-serif-light"
-                    android:textStyle="bold" />
+                    android:textSize="56sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/lf_text_primary"
+                    android:fontFamily="sans-serif-medium" />
 
                 <TextView
                     android:id="@+id/text_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Focus Session"
+                    android:layout_marginTop="@dimen/lf_spacing_sm"
+                    android:text="@string/pomodoro_status_focus"
                     android:textSize="14sp"
-                    android:textColor="@color/ios_secondary_label"
+                    android:textColor="@color/lf_text_secondary"
                     android:fontFamily="sans-serif-medium"
                     android:textAllCaps="true"
                     android:letterSpacing="0.05" />
@@ -104,7 +105,7 @@
 
         </FrameLayout>
 
-        <!-- Controls Row -->
+        <!-- ==================== Controls Row ==================== -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -122,7 +123,7 @@
                 android:text="Reset"
                 android:textSize="16sp"
                 app:cornerRadius="28dp"
-                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textColor="@color/lf_text_primary"
                 android:paddingHorizontal="24dp" />
 
             <!-- Start / Pause Button -->
@@ -130,12 +131,12 @@
                 android:id="@+id/btn_start_pause"
                 android:layout_width="wrap_content"
                 android:layout_height="56dp"
-                android:text="Start"
+                android:text="@string/start"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:cornerRadius="28dp"
-                app:backgroundTint="@color/ios_blue"
-                android:textColor="@android:color/white"
+                app:backgroundTint="@color/lf_accent"
+                android:textColor="@color/lf_on_accent"
                 android:paddingHorizontal="32dp" />
 
         </LinearLayout>
@@ -147,10 +148,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Adjust Durations"
+            android:text="@string/adjust_durations"
             app:icon="@drawable/ic_settings"
-            android:textColor="@color/ios_blue"
-            app:iconTint="@color/ios_blue" />
+            android:textColor="@color/lf_accent"
+            app:iconTint="@color/lf_accent" />
 
     </LinearLayout>
 

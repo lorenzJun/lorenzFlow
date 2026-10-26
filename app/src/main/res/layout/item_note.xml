@@ -4,16 +4,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/spacing_xs"
-    app:cardCornerRadius="12dp"
+    android:layout_margin="4dp"
+    app:cardCornerRadius="@dimen/lf_corner_card"
     app:cardElevation="0dp"
+    android:foreground="?attr/selectableItemBackground"
     app:strokeWidth="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="14dp">
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/text_note_title"
@@ -21,8 +22,9 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textColor="?attr/colorOnSurface"
+            android:textColor="@color/lf_text_primary"
             android:textSize="15sp"
+            android:textStyle="bold"
             android:fontFamily="sans-serif-medium"
             android:visibility="gone" />
 
@@ -30,10 +32,10 @@
             android:id="@+id/text_note_body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="@dimen/lf_spacing_sm"
             android:ellipsize="end"
             android:maxLines="8"
-            android:textColor="@color/ios_secondary_label"
+            android:textColor="@color/lf_text_secondary"
             android:textSize="13sp"
             android:fontFamily="sans-serif"
             android:lineSpacingMultiplier="1.3" />

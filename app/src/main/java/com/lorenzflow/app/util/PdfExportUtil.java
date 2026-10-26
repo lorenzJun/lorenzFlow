@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 
+import com.lorenzflow.app.R;
 import com.lorenzflow.app.data.Task;
 
 import java.io.File;
@@ -95,11 +96,11 @@ public class PdfExportUtil {
         float y = MARGIN;
 
         // Title
-        canvas.drawText("Lorenz Flow — Active Tasks", MARGIN, y + 22, titlePaint);
+        canvas.drawText(context.getString(R.string.pdf_title), MARGIN, y + 22, titlePaint);
         y += 32;
 
         // Date
-        canvas.drawText("Generated on " + sdf.format(new Date()), MARGIN, y + 10, subtitlePaint);
+        canvas.drawText(context.getString(R.string.pdf_generated_on, sdf.format(new Date())), MARGIN, y + 10, subtitlePaint);
         y += 20;
 
         // Divider
@@ -107,8 +108,8 @@ public class PdfExportUtil {
         y += 20;
 
         // Column headers
-        canvas.drawText("TASK", MARGIN + 15, y, headerPaint);
-        canvas.drawText("DEADLINE", PAGE_WIDTH - MARGIN - 120, y, headerPaint);
+        canvas.drawText(context.getString(R.string.pdf_col_task), MARGIN + 15, y, headerPaint);
+        canvas.drawText(context.getString(R.string.pdf_col_deadline), PAGE_WIDTH - MARGIN - 120, y, headerPaint);
         y += 8;
         canvas.drawLine(MARGIN, y, PAGE_WIDTH - MARGIN, y, linePaint);
         y += 16;
@@ -140,7 +141,7 @@ public class PdfExportUtil {
                 String deadline = sdf.format(new Date(task.getDeadline()));
                 canvas.drawText(deadline, PAGE_WIDTH - MARGIN - 120, y, deadlinePaint);
             } else {
-                canvas.drawText("No deadline", PAGE_WIDTH - MARGIN - 120, y, bodyPaint);
+                canvas.drawText(context.getString(R.string.pdf_no_deadline), PAGE_WIDTH - MARGIN - 120, y, bodyPaint);
             }
 
             y += 6;
@@ -170,8 +171,8 @@ public class PdfExportUtil {
             y = MARGIN;
         }
         y = PAGE_HEIGHT - MARGIN;
-        canvas.drawText("Total active tasks: " + tasks.size(), MARGIN, y, subtitlePaint);
-        canvas.drawText("Lorenz Flow v1.0.0", PAGE_WIDTH - MARGIN - 85, y, subtitlePaint);
+        canvas.drawText(context.getString(R.string.pdf_total_tasks, tasks.size()), MARGIN, y, subtitlePaint);
+        canvas.drawText(context.getString(R.string.pdf_footer_version), PAGE_WIDTH - MARGIN - 85, y, subtitlePaint);
 
         document.finishPage(page);
 

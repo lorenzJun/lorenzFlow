@@ -6,8 +6,11 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,6 +37,8 @@ import com.lorenzflow.app.data.TaskDao;
 import com.lorenzflow.app.databinding.DialogAddTaskBinding;
 import com.lorenzflow.app.databinding.FragmentTasksBinding;
 import com.lorenzflow.app.notification.AlarmReceiver;
+import com.lorenzflow.app.ui.NotesFragment;
+import com.lorenzflow.app.ui.PomodoroFragment;
 import com.lorenzflow.app.util.PdfExportUtil;
 
 import java.text.SimpleDateFormat;
@@ -52,6 +57,7 @@ public class TasksFragment extends Fragment implements TaskAdapter.OnTaskActionL
     private boolean completedExpanded = false;
     private android.content.SharedPreferences prefs;
     private String selectedFilterCategory = "All";
+    private String searchQuery = "";
 
     private final SimpleDateFormat sdf =
             new SimpleDateFormat("MMM dd, yyyy · hh:mm a", Locale.getDefault());
@@ -78,11 +84,58 @@ public class TasksFragment extends Fragment implements TaskAdapter.OnTaskActionL
         setupFab();
         setupMenu();
         setupCategoryFilter();
-        
+        setupQuickActions();
+        setupHeaderAvatar();
+        setupSearch();
+
         binding.btnExportPdf.setOnClickListener(v -> exportPdf());
         binding.btnClearCompleted.setOnClickListener(v -> clearCompletedTasks());
 
         loadTasks();
+    }
+
+    /** Shows the saved profile photo (same source as ProfileFragment) or the
+     *  default avatar when no photo was chosen yet. */
+    private void setupHeaderAvatar() {
+        String imageUri = prefs.getString("profile_image_uri", null);
+        if (imageUri != null && !imageUri.isEmpty()) {
+            binding.avatarImage.setImageURI(Uri.parse(imageUri));
+            if (binding.avatarImage.getDrawable() == null) {
+                binding.avatarImage.setImageResource(R.drawable.ic_default_avatar);
+            }
+        } else {
+            binding.avatarImage.setImageResource(R.drawable.ic_default_avatar);
+        }
+    }
+
+    /** Quick-action tiles on the redesigned header. */
+    private void setupQuickActions() {
+        binding.quickAddTask.setOnClickListener(v -> showTaskDialog(null));
+        binding.quickNewNote.setOnClickListener(v ->
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new NotesFragment())
+                        .addToBackStack(null)
+                        .commit());
+        binding.quickStartFocus.setOnClickListener(v ->
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new PomodoroFragment())
+                        .addToBackStack(null)
+                        .commit());
+    }
+
+    /** Client-side title search over the already-loaded task lists. */
+    private void setupSearch() {
+        binding.editSearch.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) { }
+            @Override public void onTextChanged(CharSequence s, int a, int b, int c) { }
+            @Override
+            public void afterTextChanged(Editable s) {
+                String query = s.toString().trim();
+                if (query.equals(searchQuery)) return;
+                searchQuery = query;
+                loadTasks();
+            }
+        });
     }
 
     private void setupCategoryFilter() {
@@ -225,10 +278,22 @@ public class TasksFragment extends Fragment implements TaskAdapter.OnTaskActionL
             List<Task> active = taskDao.getActiveTasks();
             List<Task> completed = taskDao.getCompletedTasks();
 
+            // Hero counts every active task due today, before filters/sorting
+            final int dueToday = countDueToday(active);
+
             // Filter by category if not "All"
             if (!selectedFilterCategory.equals("All")) {
                 active.removeIf(t -> !selectedFilterCategory.equalsIgnoreCase(t.getCategory()));
                 completed.removeIf(t -> !selectedFilterCategory.equalsIgnoreCase(t.getCategory()));
+            }
+
+            // Filter by search query (title match)
+            if (!searchQuery.isEmpty()) {
+                String q = searchQuery.toLowerCase(Locale.ROOT);
+                active.removeIf(t -> t.getTitle() == null
+                        || !t.getTitle().toLowerCase(Locale.ROOT).contains(q));
+                completed.removeIf(t -> t.getTitle() == null
+                        || !t.getTitle().toLowerCase(Locale.ROOT).contains(q));
             }
 
             // Apply Sort
@@ -238,6 +303,7 @@ public class TasksFragment extends Fragment implements TaskAdapter.OnTaskActionL
             requireActivity().runOnUiThread(() -> {
                 activeAdapter.setTasks(active);
                 completedAdapter.setTasks(completed);
+                updateHeroDueToday(dueToday);
 
                 // Completed section visibility
                 if (completed.isEmpty()) {
@@ -251,6 +317,37 @@ public class TasksFragment extends Fragment implements TaskAdapter.OnTaskActionL
                 updateEmptyState();
             });
         });
+    }
+
+    /** 
+     * Number of active tasks whose deadline falls on today's calendar date.
+     */
+    private int countDueToday(List<Task> tasks) {
+        Calendar start = Calendar.getInstance();
+        start.set(Calendar.HOUR_OF_DAY, 0);
+        start.set(Calendar.MINUTE, 0);
+        start.set(Calendar.SECOND, 0);
+        start.set(Calendar.MILLISECOND, 0);
+        Calendar end = (Calendar) start.clone();
+        end.add(Calendar.DAY_OF_YEAR, 1);
+        long startMs = start.getTimeInMillis();
+        long endMs = end.getTimeInMillis();
+
+        int count = 0;
+        for (Task t : tasks) {
+            long d = t.getDeadline();
+            if (d >= startMs && d < endMs) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private void updateHeroDueToday(int count) {
+        if (binding == null || getActivity() == null) return;
+        binding.textHeroCount.setText(String.valueOf(count));
+        binding.textHeroDueLabel.setText(
+                getResources().getQuantityString(R.plurals.hero_tasks_due, count, count));
     }
 
     private void sortTasksList(List<Task> tasks) {
@@ -365,7 +462,7 @@ public class TasksFragment extends Fragment implements TaskAdapter.OnTaskActionL
             }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show();
         });
 
-        String titleStr = existingTask != null ? "Edit Task" : getString(R.string.add_task);
+        String titleStr = existingTask != null ? getString(R.string.edit_task) : getString(R.string.add_task);
 
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(titleStr)
@@ -433,7 +530,7 @@ public class TasksFragment extends Fragment implements TaskAdapter.OnTaskActionL
     private void deleteTaskConfirm(Task task) {
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.delete)
-                .setMessage("Delete task \"" + task.getTitle() + "\"?")
+                .setMessage(getString(R.string.delete_task_confirm, task.getTitle()))
                 .setPositiveButton(R.string.delete, (dialog, which) -> {
                     Executors.newSingleThreadExecutor().execute(() -> {
                         taskDao.delete(task);
@@ -541,7 +638,7 @@ public class TasksFragment extends Fragment implements TaskAdapter.OnTaskActionL
         
         sendIntent.putExtra(Intent.EXTRA_TEXT, shareContent);
         sendIntent.setType("text/plain");
-        Intent shareIntent = Intent.createChooser(sendIntent, "Transfer Task to...");
+        Intent shareIntent = Intent.createChooser(sendIntent, getString(R.string.transfer_task_to));
         startActivity(shareIntent);
     }
 
@@ -574,9 +671,9 @@ public class TasksFragment extends Fragment implements TaskAdapter.OnTaskActionL
 
     private void clearCompletedTasks() {
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Clear Completed Tasks")
-                .setMessage("Are you sure you want to permanently delete all completed tasks?")
-                .setPositiveButton("Clear All", (dialog, which) -> {
+                .setTitle(getString(R.string.clear_completed_title))
+                .setMessage(getString(R.string.clear_completed_message))
+                .setPositiveButton(getString(R.string.clear_all), (dialog, which) -> {
                     Executors.newSingleThreadExecutor().execute(() -> {
                         taskDao.deleteAllCompleted();
                         if (getActivity() != null) {

@@ -4,23 +4,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/ios_grouped_background"
+    android:background="@color/lf_background"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingHorizontal="@dimen/lf_screen_padding"
+        android:paddingVertical="16dp">
 
-        <!-- Theme Settings Card — iOS grouped style -->
+        <!-- ==================== Theme Settings — grouped card ==================== -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="12dp"
+            app:cardCornerRadius="@dimen/lf_corner_card"
             app:cardElevation="0dp"
-            app:strokeWidth="0dp"
+            app:strokeColor="@color/lf_hairline"
+            app:strokeWidth="1dp"
             app:cardBackgroundColor="?attr/colorSurface">
 
             <LinearLayout
@@ -33,26 +35,25 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/settings_theme_title"
-                    android:textSize="17sp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     android:fontFamily="sans-serif-medium"
-                    android:textColor="?attr/colorOnSurface" />
+                    android:textColor="@color/lf_text_primary" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="2dp"
                     android:text="@string/settings_theme_desc"
                     android:textSize="13sp"
-                    android:fontFamily="sans-serif"
-                    android:textColor="@color/ios_secondary_label" />
+                    android:textColor="@color/lf_text_secondary" />
 
-                <!-- Thin iOS separator -->
+                <!-- Hairline separator -->
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
+                    android:layout_height="1dp"
                     android:layout_marginVertical="12dp"
-                    android:background="@color/ios_opaque_separator" />
+                    android:background="@color/lf_hairline" />
 
                 <RadioGroup
                     android:id="@+id/radio_group_theme"
@@ -65,27 +66,30 @@
                         android:layout_width="match_parent"
                         android:layout_height="44dp"
                         android:text="@string/settings_theme_system"
-                        android:textSize="17sp"
+                        android:textSize="16sp"
+                        android:textColor="@color/lf_text_primary"
                         android:fontFamily="sans-serif"
-                        app:buttonTint="@color/ios_blue" />
+                        app:buttonTint="@color/lf_accent" />
 
                     <com.google.android.material.radiobutton.MaterialRadioButton
                         android:id="@+id/radio_theme_light"
                         android:layout_width="match_parent"
                         android:layout_height="44dp"
                         android:text="@string/settings_theme_light"
-                        android:textSize="17sp"
+                        android:textSize="16sp"
+                        android:textColor="@color/lf_text_primary"
                         android:fontFamily="sans-serif"
-                        app:buttonTint="@color/ios_blue" />
+                        app:buttonTint="@color/lf_accent" />
 
                     <com.google.android.material.radiobutton.MaterialRadioButton
                         android:id="@+id/radio_theme_dark"
                         android:layout_width="match_parent"
                         android:layout_height="44dp"
                         android:text="@string/settings_theme_dark"
-                        android:textSize="17sp"
+                        android:textSize="16sp"
+                        android:textColor="@color/lf_text_primary"
                         android:fontFamily="sans-serif"
-                        app:buttonTint="@color/ios_blue" />
+                        app:buttonTint="@color/lf_accent" />
 
                 </RadioGroup>
 
@@ -93,13 +97,14 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Notification Settings Card — iOS grouped style -->
+        <!-- ==================== Notifications — grouped card ==================== -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
+            app:cardCornerRadius="@dimen/lf_corner_card"
             app:cardElevation="0dp"
-            app:strokeWidth="0dp"
+            app:strokeColor="@color/lf_hairline"
+            app:strokeWidth="1dp"
             app:cardBackgroundColor="?attr/colorSurface">
 
             <LinearLayout
@@ -112,26 +117,25 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/settings_notifications_title"
-                    android:textSize="17sp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     android:fontFamily="sans-serif-medium"
-                    android:textColor="?attr/colorOnSurface" />
+                    android:textColor="@color/lf_text_primary" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="2dp"
                     android:text="@string/settings_notifications_desc"
                     android:textSize="13sp"
-                    android:fontFamily="sans-serif"
-                    android:textColor="@color/ios_secondary_label" />
+                    android:textColor="@color/lf_text_secondary" />
 
-                <!-- Thin iOS separator -->
+                <!-- Hairline separator -->
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
+                    android:layout_height="1dp"
                     android:layout_marginVertical="12dp"
-                    android:background="@color/ios_opaque_separator" />
+                    android:background="@color/lf_hairline" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -145,14 +149,16 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/settings_notifications_enable"
-                        android:textSize="17sp"
-                        android:fontFamily="sans-serif"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:textSize="16sp"
+                        android:textColor="@color/lf_text_primary"
+                        android:fontFamily="sans-serif" />
 
                     <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/switch_notifications"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        app:thumbTint="@color/lf_accent"
+                        app:trackTint="@color/lf_pastel_lilac" />
 
                 </LinearLayout>
 
@@ -160,14 +166,17 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Profile Card -->
+        <!-- ==================== Navigation row cards (icon badges) ==================== -->
+
+        <!-- Profile -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:cardCornerRadius="12dp"
+            app:cardCornerRadius="@dimen/lf_corner_card"
             app:cardElevation="0dp"
-            app:strokeWidth="0dp"
+            app:strokeColor="@color/lf_hairline"
+            app:strokeWidth="1dp"
             app:cardBackgroundColor="?attr/colorSurface">
 
             <LinearLayout
@@ -182,10 +191,13 @@
                 android:focusable="true">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/icon_badge_background"
+                    android:backgroundTint="@color/lf_pastel_lilac_deep"
+                    android:padding="8dp"
                     android:src="@drawable/ic_profile"
-                    app:tint="@color/ios_blue"
+                    app:tint="@color/white"
                     android:importantForAccessibility="no" />
 
                 <LinearLayout
@@ -198,18 +210,19 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="My Profile"
-                        android:textSize="17sp"
-                        android:fontFamily="sans-serif-medium"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:text="@string/settings_profile_title"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/lf_text_primary"
+                        android:fontFamily="sans-serif-medium" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="View and edit profile details"
+                        android:layout_marginTop="1dp"
+                        android:text="@string/settings_profile_desc"
                         android:textSize="13sp"
-                        android:fontFamily="sans-serif"
-                        android:textColor="@color/ios_secondary_label" />
+                        android:textColor="@color/lf_text_secondary" />
 
                 </LinearLayout>
 
@@ -218,21 +231,22 @@
                     android:layout_height="20dp"
                     android:src="@drawable/ic_expand_more"
                     android:rotation="270"
-                    app:tint="@color/ios_secondary_label"
+                    app:tint="@color/lf_text_secondary"
                     android:importantForAccessibility="no" />
 
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Password Manager Card -->
+        <!-- Password Manager -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="12dp"
+            android:layout_marginTop="12dp"
+            app:cardCornerRadius="@dimen/lf_corner_card"
             app:cardElevation="0dp"
-            app:strokeWidth="0dp"
+            app:strokeColor="@color/lf_hairline"
+            app:strokeWidth="1dp"
             app:cardBackgroundColor="?attr/colorSurface">
 
             <LinearLayout
@@ -247,10 +261,13 @@
                 android:focusable="true">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/icon_badge_background"
+                    android:backgroundTint="@color/lf_pastel_mint_deep"
+                    android:padding="8dp"
                     android:src="@drawable/ic_lock"
-                    app:tint="@color/ios_green"
+                    app:tint="@color/white"
                     android:importantForAccessibility="no" />
 
                 <LinearLayout
@@ -263,18 +280,19 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Password Manager"
-                        android:textSize="17sp"
-                        android:fontFamily="sans-serif-medium"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:text="@string/settings_pm_title"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/lf_text_primary"
+                        android:fontFamily="sans-serif-medium" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Securely store and manage your passwords"
+                        android:layout_marginTop="1dp"
+                        android:text="@string/settings_pm_desc"
                         android:textSize="13sp"
-                        android:fontFamily="sans-serif"
-                        android:textColor="@color/ios_secondary_label" />
+                        android:textColor="@color/lf_text_secondary" />
 
                 </LinearLayout>
 
@@ -283,22 +301,23 @@
                     android:layout_height="20dp"
                     android:src="@drawable/ic_expand_more"
                     android:rotation="270"
-                    app:tint="@color/ios_secondary_label"
+                    app:tint="@color/lf_text_secondary"
                     android:importantForAccessibility="no" />
 
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Information Card -->
+        <!-- About -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="12dp"
+            app:cardCornerRadius="@dimen/lf_corner_card"
             app:cardElevation="0dp"
-            app:strokeWidth="0dp"
+            app:strokeColor="@color/lf_hairline"
+            app:strokeWidth="1dp"
             app:cardBackgroundColor="?attr/colorSurface">
 
             <LinearLayout
@@ -313,10 +332,13 @@
                 android:focusable="true">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/icon_badge_background"
+                    android:backgroundTint="@color/lf_pastel_peach_deep"
+                    android:padding="8dp"
                     android:src="@drawable/ic_about"
-                    app:tint="@color/ios_purple"
+                    app:tint="@color/white"
                     android:importantForAccessibility="no" />
 
                 <LinearLayout
@@ -329,18 +351,19 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="About Lorenz Flow"
-                        android:textSize="17sp"
-                        android:fontFamily="sans-serif-medium"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:text="@string/about_title"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/lf_text_primary"
+                        android:fontFamily="sans-serif-medium" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Credits, contacts, and legal info"
+                        android:layout_marginTop="1dp"
+                        android:text="@string/settings_about_desc"
                         android:textSize="13sp"
-                        android:fontFamily="sans-serif"
-                        android:textColor="@color/ios_secondary_label" />
+                        android:textColor="@color/lf_text_secondary" />
 
                 </LinearLayout>
 
@@ -349,7 +372,7 @@
                     android:layout_height="20dp"
                     android:src="@drawable/ic_expand_more"
                     android:rotation="270"
-                    app:tint="@color/ios_secondary_label"
+                    app:tint="@color/lf_text_secondary"
                     android:importantForAccessibility="no" />
 
             </LinearLayout>

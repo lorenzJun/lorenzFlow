@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pastel card gradient (mint): 24dp-rounded, subtle top-to-bottom wash,
+     designed for Widget.LorenzFlow.CardView / lf_corner_card containers. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:angle="270"
+        android:startColor="@color/lf_pastel_mint"
+        android:endColor="@color/lf_pastel_mint_deep"
+        android:type="linear" />
+    <corners android:radius="@dimen/lf_corner_card" />
+</shape>

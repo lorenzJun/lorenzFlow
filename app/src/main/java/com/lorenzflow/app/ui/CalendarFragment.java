@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 import com.lorenzflow.app.R;
 import com.lorenzflow.app.data.AppDatabase;
 import com.lorenzflow.app.data.Task;
@@ -91,7 +92,7 @@ public class CalendarFragment extends Fragment implements TaskAdapter.OnTaskActi
 
     private void updateHeaderLabel() {
         String formattedDate = sdfHeader.format(selectedCalendar.getTime());
-        binding.textSelectedDate.setText("Tasks due on " + formattedDate);
+        binding.textSelectedDate.setText(getString(R.string.tasks_due_on, formattedDate));
     }
 
     private void loadAllTasks() {
@@ -170,13 +171,35 @@ public class CalendarFragment extends Fragment implements TaskAdapter.OnTaskActi
 
         sendIntent.putExtra(Intent.EXTRA_TEXT, shareContent);
         sendIntent.setType("text/plain");
-        Intent shareIntent = Intent.createChooser(sendIntent, "Transfer Task to...");
+        Intent shareIntent = Intent.createChooser(sendIntent, getString(R.string.transfer_task_to));
         startActivity(shareIntent);
     }
 
     @Override
     public void onTaskArchive(Task task) {
-
+        task.setArchived(true);
+        Executors.newSingleThreadExecutor().execute(() -> {
+            taskDao.update(task);
+            cancelAlarm(task);
+            if (getActivity() == null) return;
+            requireActivity().runOnUiThread(() -> {
+                loadAllTasks();
+                Snackbar.make(binding.getRoot(), R.string.task_archived, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.undo, v -> {
+                            task.setArchived(false);
+                            Executors.newSingleThreadExecutor().execute(() -> {
+                                taskDao.update(task);
+                                if (task.getDeadline() > 0 && task.getDeadline() > System.currentTimeMillis() && !task.isCompleted()) {
+                                    scheduleAlarm(task);
+                                }
+                                if (getActivity() != null) {
+                                    requireActivity().runOnUiThread(CalendarFragment.this::loadAllTasks);
+                                }
+                            });
+                        })
+                        .show();
+            });
+        });
     }
 
     private void showTaskDialog(Task task) {
@@ -236,7 +259,7 @@ public class CalendarFragment extends Fragment implements TaskAdapter.OnTaskActi
         });
 
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Edit Task")
+                .setTitle(getString(R.string.edit_task))
                 .setView(dialogBinding.getRoot())
                 .setPositiveButton(R.string.save, (dialog, which) -> {
                     String title = dialogBinding.editTaskTitle.getText() != null
@@ -283,7 +306,7 @@ public class CalendarFragment extends Fragment implements TaskAdapter.OnTaskActi
     private void deleteTaskConfirm(Task task) {
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.delete)
-                .setMessage("Delete task \"" + task.getTitle() + "\"?")
+                .setMessage(getString(R.string.delete_task_confirm, task.getTitle()))
                 .setPositiveButton(R.string.delete, (dialog, which) -> {
                     Executors.newSingleThreadExecutor().execute(() -> {
                         taskDao.delete(task);

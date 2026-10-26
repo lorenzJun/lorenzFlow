@@ -25,4 +25,26 @@
 
     <!-- iOS standard row height -->
     <dimen name="ios_row_height">44dp</dimen>
+
+    <!-- ==================== LF SPACING SCALE (8/12/16/24) ==================== -->
+    <dimen name="lf_spacing_sm">8dp</dimen>
+    <dimen name="lf_spacing_md">12dp</dimen>
+    <dimen name="lf_spacing_lg">16dp</dimen>
+    <dimen name="lf_spacing_xl">24dp</dimen>
+
+    <!-- Corner radii (pairs with the shape appearances in themes.xml) -->
+    <dimen name="lf_corner_card">24dp</dimen>
+    <dimen name="lf_corner_pill">100dp</dimen>
+    <dimen name="lf_corner_badge">8dp</dimen>
+
+    <!-- Icon badge -->
+    <dimen name="lf_badge_size">36dp</dimen>
+    <dimen name="lf_badge_icon">20dp</dimen>
+
+    <!-- Search bar -->
+    <dimen name="lf_search_height">48dp</dimen>
+    <dimen name="lf_search_horizontal_padding">20dp</dimen>
+
+    <!-- Screen-level horizontal padding, shared by all main screens -->
+    <dimen name="lf_screen_padding">16dp</dimen>
 </resources>

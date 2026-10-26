@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.lorenzflow.app.R;
 import com.lorenzflow.app.databinding.FragmentAboutBinding;
 
 public class AboutFragment extends Fragment {
@@ -42,7 +43,7 @@ public class AboutFragment extends Fragment {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/lorenshie/"));
                     startActivity(intent);
                 } catch (Exception ex) {
-                    Toast.makeText(requireContext(), "No browser found to open link", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), R.string.no_browser_found, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -51,11 +52,11 @@ public class AboutFragment extends Fragment {
             Intent intent = new Intent(Intent.ACTION_SENDTO);
             intent.setData(Uri.parse("mailto:"));
             intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"junlorenzmasangcay@gmail.com"});
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Lorenz Flow Feedback");
+            intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject));
             try {
                 startActivity(intent);
             } catch (android.content.ActivityNotFoundException e) {
-                Toast.makeText(requireContext(), "No email client found", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), R.string.no_email_client, Toast.LENGTH_SHORT).show();
             }
         });
     }

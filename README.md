@@ -128,8 +128,8 @@ To compile and run this project, your environment must satisfy the following cri
 
 ### System & Build Requirements
 *   **Java Development Kit (JDK):** Version 17
-*   **Gradle Build System:** Gradle Version `9.4.1`
-*   **Android Gradle Plugin (AGP):** Version `9.2.1`
+*   **Gradle Build System:** Gradle Version `9.5.0`
+*   **Android Gradle Plugin (AGP):** Version `9.3.3`
 *   **Android SDK Platforms:** Compile SDK version `34`, Target SDK version `34`
 *   **Minimum Target Support:** Min SDK version `26` (Android 8.0 Oreo and above)
 

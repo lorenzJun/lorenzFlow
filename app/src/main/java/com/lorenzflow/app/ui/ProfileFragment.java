@@ -115,7 +115,7 @@ public class ProfileFragment extends Fragment {
             binding.profileImage.setImageURI(Uri.parse(savedUriStr));
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(requireContext(), "Failed to save profile picture", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), R.string.failed_to_save_profile_picture, Toast.LENGTH_SHORT).show();
         }
     }
 

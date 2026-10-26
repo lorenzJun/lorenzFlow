@@ -7,13 +7,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
-    android:background="@color/ios_grouped_background">
+    android:background="@color/lf_background">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/ios_grouped_background"
+        android:background="@android:color/transparent"
         app:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
@@ -33,30 +33,26 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <!-- iOS-style tab bar with thin top separator -->
+    <!-- Soft & airy tab bar: the nav draws its own rounded-top surface;
+         the container stays transparent so the corners show the page bg. -->
     <LinearLayout
         android:id="@+id/bottom_bar_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="?attr/colorSurface">
-
-        <!-- Thin separator line (like iOS) -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/ios_separator" />
+        android:orientation="vertical">
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorSurface"
+            android:background="@drawable/bg_bottom_nav"
             app:labelVisibilityMode="labeled"
             app:menu="@menu/bottom_nav_menu"
             app:elevation="0dp"
             app:itemActiveIndicatorStyle="@null"
             app:itemIconTint="@color/bottom_nav_color"
+            app:itemTextAppearanceActive="@style/TextAppearance.LF.BottomNav.Active"
+            app:itemTextAppearanceInactive="@style/TextAppearance.LF.BottomNav.Inactive"
             app:itemTextColor="@color/bottom_nav_color" />
 
     </LinearLayout>

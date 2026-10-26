@@ -11,15 +11,18 @@ import android.widget.RadioGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 
 import com.lorenzflow.app.R;
 import com.lorenzflow.app.databinding.FragmentSettingsBinding;
+import com.lorenzflow.app.notification.NotificationHelper;
 
 public class SettingsFragment extends Fragment {
 
     private FragmentSettingsBinding binding;
     private SharedPreferences prefs;
+    private android.widget.CompoundButton.OnCheckedChangeListener notifToggleListener;
 
     private static final String PREFS_NAME = "lorenz_flow_prefs";
     private static final String PREF_THEME_KEY = "pref_theme"; // 0 = System, 1 = Light, 2 = Dark
@@ -101,14 +104,47 @@ public class SettingsFragment extends Fragment {
     }
 
     private void setupNotificationSelection() {
-        boolean savedNotifState = prefs.getBoolean(PREF_NOTIF_KEY, true); // Default: true
-
-        binding.switchNotifications.setChecked(savedNotifState);
-
-        binding.switchNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        notifToggleListener = (buttonView, isChecked) -> {
             // Save preference
             prefs.edit().putBoolean(PREF_NOTIF_KEY, isChecked).apply();
-        });
+
+            // The system permission can still be missing even though the user
+            // wants reminders — route them to the system notification settings.
+            if (isChecked && !NotificationManagerCompat.from(requireContext())
+                    .areNotificationsEnabled()) {
+                NotificationHelper.openNotificationSettings(requireContext());
+            }
+        };
+
+        binding.switchNotifications.setOnCheckedChangeListener(notifToggleListener);
+        refreshNotificationToggle();
+    }
+
+    /**
+     * The switch reflects the effective reminder state: the user preference
+     * AND the required system permission. Re-checked on resume so enabling
+     * via system settings after this screen is left is picked up.
+     */
+    private void refreshNotificationToggle() {
+        if (binding == null) return;
+
+        boolean prefEnabled = prefs.getBoolean(PREF_NOTIF_KEY, true);
+        boolean systemGranted = NotificationManagerCompat.from(requireContext())
+                .areNotificationsEnabled();
+        boolean effectiveEnabled = prefEnabled && systemGranted;
+
+        if (binding.switchNotifications.isChecked() == effectiveEnabled) return;
+
+        // Detach to avoid the listener re-firing while syncing the visual state
+        binding.switchNotifications.setOnCheckedChangeListener(null);
+        binding.switchNotifications.setChecked(effectiveEnabled);
+        binding.switchNotifications.setOnCheckedChangeListener(notifToggleListener);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshNotificationToggle();
     }
 
     @Override

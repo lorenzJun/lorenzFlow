@@ -4,22 +4,377 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/ios_grouped_background">
+    android:background="@color/lf_background">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Category filter bar -->
+        <!-- ==================== Header: greeting + export + avatar ==================== -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/lf_spacing_sm"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/lf_screen_padding">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tasks_greeting"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/lf_text_primary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/tasks_greeting_subtitle"
+                    android:textSize="13sp"
+                    android:textColor="@color/lf_text_secondary" />
+
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_export_pdf"
+                style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:contentDescription="@string/export_pdf"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                app:backgroundTint="@color/lf_accent_soft"
+                app:icon="@drawable/ic_export_pdf"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="@color/lf_accent" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/avatar_image"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="@dimen/lf_spacing_md"
+                android:contentDescription="@string/cd_profile_picture"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_default_avatar"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.LF.Circle" />
+
+        </LinearLayout>
+
+        <!-- ==================== Hero: Today's focus ==================== -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/hero_today_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/lf_spacing_md"
+            app:cardCornerRadius="@dimen/lf_corner_card"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_pastel_sky"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="16dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:letterSpacing="0.08"
+                        android:text="@string/hero_today_label"
+                        android:textAllCaps="true"
+                        android:textColor="@color/lf_text_secondary"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+id/text_hero_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="@color/lf_text_primary"
+                        android:textSize="34sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/text_hero_due_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:textColor="@color/lf_text_secondary"
+                        android:textSize="13sp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/icon_badge_background"
+                    android:backgroundTint="@color/lf_pastel_sky_deep"
+                    android:importantForAccessibility="no"
+                    android:padding="13dp"
+                    android:src="@drawable/ic_calendar" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ==================== Quick actions ==================== -->
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="none"
-            android:background="?attr/colorSurface"
-            android:elevation="1dp"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="8dp">
+            android:layout_marginTop="@dimen/lf_spacing_md"
+            android:clipToPadding="false"
+            android:paddingHorizontal="@dimen/lf_screen_padding"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <!-- Add Task -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/quick_add_task"
+                    android:layout_width="112dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/lf_spacing_md"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="?attr/colorSurface"
+                    app:cardCornerRadius="@dimen/lf_corner_card"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/lf_hairline"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:background="@drawable/icon_badge_background"
+                            android:backgroundTint="@color/lf_pastel_sky_deep"
+                            android:padding="7dp"
+                            android:src="@drawable/ic_add"
+                            android:importantForAccessibility="no" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/lf_spacing_md"
+                            android:fontFamily="sans-serif-medium"
+                            android:letterSpacing="0.08"
+                            android:text="@string/quick_label_create"
+                            android:textColor="@color/lf_text_secondary"
+                            android:textSize="9sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:text="@string/quick_title_add_task"
+                            android:textColor="@color/lf_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- New Note -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/quick_new_note"
+                    android:layout_width="112dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/lf_spacing_md"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="?attr/colorSurface"
+                    app:cardCornerRadius="@dimen/lf_corner_card"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/lf_hairline"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:background="@drawable/icon_badge_background"
+                            android:backgroundTint="@color/lf_pastel_mint_deep"
+                            android:padding="7dp"
+                            android:src="@drawable/ic_notes"
+                            android:importantForAccessibility="no" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/lf_spacing_md"
+                            android:fontFamily="sans-serif-medium"
+                            android:letterSpacing="0.08"
+                            android:text="@string/quick_label_capture"
+                            android:textColor="@color/lf_text_secondary"
+                            android:textSize="9sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:text="@string/quick_title_new_note"
+                            android:textColor="@color/lf_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Start Focus -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/quick_start_focus"
+                    android:layout_width="112dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/lf_spacing_md"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="?attr/colorSurface"
+                    app:cardCornerRadius="@dimen/lf_corner_card"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/lf_hairline"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:background="@drawable/icon_badge_background"
+                            android:backgroundTint="@color/lf_pastel_lilac_deep"
+                            android:padding="7dp"
+                            android:src="@drawable/ic_timer"
+                            android:importantForAccessibility="no" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/lf_spacing_md"
+                            android:fontFamily="sans-serif-medium"
+                            android:letterSpacing="0.08"
+                            android:text="@string/quick_label_focus"
+                            android:textColor="@color/lf_text_secondary"
+                            android:textSize="9sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:text="@string/quick_title_start_focus"
+                            android:textColor="@color/lf_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+
+        <!-- ==================== Pill search bar ==================== -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/lf_search_height"
+            android:layout_marginHorizontal="@dimen/lf_screen_padding"
+            android:layout_marginTop="@dimen/lf_spacing_md"
+            android:background="@drawable/pill_search_background"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/lf_search_horizontal_padding">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_search"
+                app:tint="@color/lf_text_secondary"
+                android:importantForAccessibility="no" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="12dp"
+                android:background="@null"
+                android:hint="@string/search_tasks_hint"
+                android:imeOptions="actionSearch"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:textColor="@color/lf_text_primary"
+                android:textColorHint="@color/lf_text_secondary"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+        <!-- ==================== Section title ==================== -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/lf_spacing_xl"
+            android:paddingHorizontal="@dimen/lf_screen_padding"
+            android:text="@string/my_tasks_section"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/lf_text_primary" />
+
+        <!-- ==================== Category filter chips (pill) ==================== -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/lf_spacing_sm"
+            android:clipToPadding="false"
+            android:paddingHorizontal="@dimen/lf_screen_padding"
+            android:scrollbars="none">
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chip_group_filter"
@@ -80,6 +435,7 @@
                     android:text="Urgent" />
 
             </com.google.android.material.chip.ChipGroup>
+
         </HorizontalScrollView>
 
         <androidx.core.widget.NestedScrollView
@@ -89,177 +445,142 @@
             android:layout_weight="1"
             android:fillViewport="true">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="100dp">
-
-            <!-- Header and PDF Export Row -->
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="20dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="4dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="My Tasks"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:fontFamily="sans-serif-medium"
-                    android:textColor="?attr/colorOnSurface" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_export_pdf"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Export to PDF"
-                    app:icon="@drawable/ic_export_pdf"
-                    android:textColor="@color/ios_blue"
-                    app:iconTint="@color/ios_blue"
-                    android:textSize="13sp" />
-
-            </LinearLayout>
-
-            <!-- Empty state -->
-            <LinearLayout
-                android:id="@+id/empty_state"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="@dimen/spacing_xl"
-                android:visibility="gone">
-
-                <ImageView
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
-                    android:src="@drawable/ic_tasks"
-                    android:alpha="0.3"
-                    android:importantForAccessibility="no" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_md"
-                    android:text="@string/no_tasks_yet"
-                    android:textAlignment="center"
-                    android:textColor="@color/ios_secondary_label"
-                    android:textSize="15sp"
-                    android:fontFamily="sans-serif" />
-
-            </LinearLayout>
-
-            <!-- Active tasks list -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_active_tasks"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:clipToPadding="false"
-                android:paddingHorizontal="16dp"
-                android:paddingTop="8dp" />
-
-            <!-- Completed tasks section -->
-            <LinearLayout
-                android:id="@+id/completed_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:paddingBottom="100dp">
 
-                <!-- Completed header container -->
+                <!-- Empty state -->
                 <LinearLayout
+                    android:id="@+id/empty_state"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingEnd="12dp">
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_xl"
+                    android:visibility="gone">
 
-                    <!-- Completed header toggle -->
-                    <LinearLayout
-                        android:id="@+id/completed_header"
-                        android:layout_width="0dp"
-                        android:layout_height="44dp"
-                        android:layout_weight="1"
-                        android:background="?attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingHorizontal="20dp"
-                        android:contentDescription="@string/cd_expand_completed">
+                    <ImageView
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:src="@drawable/ic_tasks"
+                        android:alpha="0.3"
+                        app:tint="@color/lf_text_secondary"
+                        android:importantForAccessibility="no" />
 
-                        <ImageView
-                            android:id="@+id/expand_icon"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_expand_more"
-                            app:tint="@color/ios_secondary_label"
-                            android:importantForAccessibility="no" />
-
-                        <TextView
-                            android:id="@+id/completed_label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/spacing_sm"
-                            android:textColor="@color/ios_secondary_label"
-                            android:textSize="13sp"
-                            android:fontFamily="sans-serif-medium"
-                            android:textAllCaps="true"
-                            android:letterSpacing="0.04" />
-
-                    </LinearLayout>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_clear_completed"
-                        style="@style/Widget.Material3.Button.TextButton"
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Clear All"
-                        android:textColor="@color/ios_red"
-                        android:textSize="12sp"
-                        app:rippleColor="#4DFF3B30" />
+                        android:layout_marginTop="@dimen/lf_spacing_md"
+                        android:text="@string/no_tasks_yet"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.LF.Caption"
+                        android:textSize="14sp" />
 
                 </LinearLayout>
 
-                <!-- Completed tasks list -->
+                <!-- Active tasks list -->
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_completed_tasks"
+                    android:id="@+id/recycler_active_tasks"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"
+                    android:layout_marginTop="@dimen/lf_spacing_sm"
                     android:clipToPadding="false"
-                    android:paddingHorizontal="16dp"
-                    android:visibility="gone" />
+                    android:paddingHorizontal="@dimen/lf_screen_padding"
+                    android:nestedScrollingEnabled="false" />
+
+                <!-- Completed tasks section -->
+                <LinearLayout
+                    android:id="@+id/completed_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <!-- Completed header container -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingEnd="12dp">
+
+                        <!-- Completed header toggle -->
+                        <LinearLayout
+                            android:id="@+id/completed_header"
+                            android:layout_width="0dp"
+                            android:layout_height="44dp"
+                            android:layout_weight="1"
+                            android:background="?attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="@dimen/lf_screen_padding"
+                            android:contentDescription="@string/cd_expand_completed">
+
+                            <ImageView
+                                android:id="@+id/expand_icon"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_expand_more"
+                                app:tint="@color/lf_text_secondary"
+                                android:importantForAccessibility="no" />
+
+                            <TextView
+                                android:id="@+id/completed_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/lf_spacing_sm"
+                                android:textAppearance="@style/TextAppearance.LF.Caption"
+                                android:fontFamily="sans-serif-medium"
+                                android:textAllCaps="true"
+                                android:letterSpacing="0.04" />
+
+                        </LinearLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_clear_completed"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/clear_all"
+                            android:textColor="@color/ios_red"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                    <!-- Completed tasks list -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_completed_tasks"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:paddingHorizontal="@dimen/lf_screen_padding"
+                        android:nestedScrollingEnabled="false"
+                        android:visibility="gone" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
-        </LinearLayout>
-
-    </androidx.core.widget.NestedScrollView>
+        </androidx.core.widget.NestedScrollView>
 
     </LinearLayout>
 
-    <!-- iOS-style floating add button — large, prominent, always visible -->
+    <!-- Floating add button — solid accent, no shadow, pill corner -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/fab_add_task"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_gravity="bottom|end"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
-        android:elevation="8dp"
+        android:layout_marginEnd="@dimen/lf_screen_padding"
+        android:layout_marginBottom="@dimen/lf_screen_padding"
+        android:elevation="0dp"
         android:text="+"
         android:textSize="28sp"
-        android:textColor="@android:color/white"
+        android:textColor="@color/lf_on_accent"
         android:textStyle="normal"
         android:gravity="center"
         android:insetTop="0dp"
@@ -269,10 +590,9 @@
         android:paddingTop="0dp"
         android:paddingBottom="0dp"
         android:contentDescription="@string/cd_add_button"
-        app:backgroundTint="@color/ios_blue"
+        app:backgroundTint="@color/lf_accent"
         app:cornerRadius="30dp"
         app:iconPadding="0dp"
-        app:rippleColor="#4D007AFF"
         style="@style/Widget.Material3.Button.UnelevatedButton" />
 
 </FrameLayout>

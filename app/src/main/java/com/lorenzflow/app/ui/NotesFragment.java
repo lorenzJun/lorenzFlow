@@ -1,7 +1,10 @@
 package com.lorenzflow.app.ui;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -51,6 +54,7 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteClickLi
         super.onViewCreated(view, savedInstanceState);
 
         noteDao = AppDatabase.getInstance(requireContext()).noteDao();
+        setupHeaderAvatar();
 
         adapter = new NoteAdapter(this);
         binding.recyclerNotes.setLayoutManager(
@@ -125,6 +129,22 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteClickLi
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
         loadNotes();
+    }
+
+    /** Shows the saved profile photo (same source as TasksFragment) or the
+     *  default avatar when no photo was chosen yet. */
+    private void setupHeaderAvatar() {
+        Context ctx = requireContext();
+        SharedPreferences prefs = ctx.getSharedPreferences("lorenz_flow_prefs", Context.MODE_PRIVATE);
+        String imageUri = prefs.getString("profile_image_uri", null);
+        if (imageUri != null && !imageUri.isEmpty()) {
+            binding.avatarImage.setImageURI(Uri.parse(imageUri));
+            if (binding.avatarImage.getDrawable() == null) {
+                binding.avatarImage.setImageResource(R.drawable.ic_default_avatar);
+            }
+        } else {
+            binding.avatarImage.setImageResource(R.drawable.ic_default_avatar);
+        }
     }
 
     private void loadNotes() {
@@ -209,7 +229,7 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteClickLi
             dialogBinding.editNoteBody.setText(existingNote.getBody());
         }
 
-        String dialogTitle = existingNote != null ? "Edit Note" : getString(R.string.add_note);
+        String dialogTitle = existingNote != null ? getString(R.string.edit_note) : getString(R.string.add_note);
 
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(dialogTitle)
@@ -279,7 +299,7 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteClickLi
     public void onNoteLongClick(Note note) {
         // Show options: Archive or Delete
         String noteLabel = (note.getTitle() != null && !note.getTitle().isEmpty())
-                ? note.getTitle() : "this note";
+                ? note.getTitle() : getString(R.string.this_note);
 
         String[] options = {getString(R.string.archive), getString(R.string.delete)};
 
@@ -293,7 +313,7 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteClickLi
                         // Delete
                         new MaterialAlertDialogBuilder(requireContext())
                                 .setTitle(R.string.delete)
-                                .setMessage("Delete \"" + noteLabel + "\"?")
+                                .setMessage(getString(R.string.delete_note_confirm, noteLabel))
                                 .setPositiveButton(R.string.delete, (d, w) -> {
                                     Executors.newSingleThreadExecutor().execute(() -> {
                                         noteDao.delete(note);

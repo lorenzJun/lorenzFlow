@@ -4,57 +4,117 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/ios_grouped_background">
+    android:background="@color/lf_background">
 
-    <!-- Empty state -->
     <LinearLayout
-        android:id="@+id/empty_state"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="@dimen/spacing_xl"
-        android:visibility="gone">
+        android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="72dp"
-            android:layout_height="72dp"
-            android:src="@drawable/ic_notes"
-            android:alpha="0.3"
-            android:importantForAccessibility="no" />
-
-        <TextView
-            android:layout_width="wrap_content"
+        <!-- ==================== Header: greeting + avatar ==================== -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_md"
-            android:text="@string/no_notes_yet"
-            android:textAlignment="center"
-            android:textColor="@color/ios_secondary_label"
-            android:textSize="15sp"
-            android:fontFamily="sans-serif" />
+            android:layout_marginTop="@dimen/lf_spacing_sm"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/lf_screen_padding">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/my_notes_title"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/lf_text_primary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/my_notes_subtitle"
+                    android:textSize="13sp"
+                    android:textColor="@color/lf_text_secondary" />
+
+            </LinearLayout>
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/avatar_image"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="@dimen/lf_spacing_md"
+                android:contentDescription="@string/cd_profile_picture"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_default_avatar"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.LF.Circle" />
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <!-- Empty state -->
+            <LinearLayout
+                android:id="@+id/empty_state"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_xl"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:src="@drawable/ic_notes"
+                    android:alpha="0.3"
+                    app:tint="@color/lf_text_secondary"
+                    android:importantForAccessibility="no" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/lf_spacing_md"
+                    android:text="@string/no_notes_yet"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.LF.Caption"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_notes"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:padding="@dimen/note_grid_spacing"
+                android:paddingBottom="100dp" />
+
+        </FrameLayout>
 
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_notes"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:padding="@dimen/note_grid_spacing"
-        android:paddingBottom="100dp" />
-
-    <!-- iOS-style floating add button -->
+    <!-- Floating add button — solid accent, no shadow, pill corner -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/fab_add_note"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_gravity="bottom|end"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
-        android:elevation="8dp"
+        android:layout_marginEnd="@dimen/lf_screen_padding"
+        android:layout_marginBottom="@dimen/lf_screen_padding"
+        android:elevation="0dp"
         android:text="+"
         android:textSize="28sp"
-        android:textColor="@android:color/white"
+        android:textColor="@color/lf_on_accent"
         android:textStyle="normal"
         android:gravity="center"
         android:insetTop="0dp"
@@ -64,10 +124,10 @@
         android:paddingTop="0dp"
         android:paddingBottom="0dp"
         android:contentDescription="@string/cd_add_button"
-        app:backgroundTint="@color/ios_blue"
+        app:backgroundTint="@color/lf_accent"
         app:cornerRadius="30dp"
         app:iconPadding="0dp"
-        app:rippleColor="#4D007AFF"
+        app:rippleColor="#4D5B67E8"
         style="@style/Widget.Material3.Button.UnelevatedButton" />
 
 </FrameLayout>

@@ -49,7 +49,6 @@ public class PomodoroFragment extends Fragment {
     private Vibrator vibrator;
 
     private static final String CHANNEL_ID = "Pomodoro_Timer";
-    private static final String CHANNEL_NAME = "Pomodoro Timer";
 
     @Nullable
     @Override
@@ -103,24 +102,24 @@ public class PomodoroFragment extends Fragment {
             if (checkedId == R.id.btn_mode_focus) {
                 currentMode = "Focus";
                 totalTimeMillis = focusTimeMillis;
-                binding.textStatus.setText("Focus Session");
-                binding.pomodoroProgress.setIndicatorColor(requireContext().getColor(R.color.ios_blue));
+                binding.textStatus.setText(getString(R.string.pomodoro_status_focus));
+                binding.pomodoroProgress.setIndicatorColor(requireContext().getColor(R.color.lf_accent));
             } else if (checkedId == R.id.btn_mode_short) {
                 currentMode = "Short";
                 totalTimeMillis = shortBreakTimeMillis;
-                binding.textStatus.setText("Short Break");
-                binding.pomodoroProgress.setIndicatorColor(requireContext().getColor(R.color.ios_green));
+                binding.textStatus.setText(getString(R.string.pomodoro_status_short));
+                binding.pomodoroProgress.setIndicatorColor(requireContext().getColor(R.color.lf_pastel_mint_deep));
             } else if (checkedId == R.id.btn_mode_long) {
                 currentMode = "Long";
                 totalTimeMillis = longBreakTimeMillis;
-                binding.textStatus.setText("Long Break");
-                binding.pomodoroProgress.setIndicatorColor(requireContext().getColor(R.color.ios_purple));
+                binding.textStatus.setText(getString(R.string.pomodoro_status_long));
+                binding.pomodoroProgress.setIndicatorColor(requireContext().getColor(R.color.lf_pastel_lilac_deep));
             }
 
             timeLeftMillis = totalTimeMillis;
             updateTimerText();
             updateProgressBar();
-            binding.btnStartPause.setText("Start");
+            binding.btnStartPause.setText(getString(R.string.start));
         });
     }
 
@@ -154,7 +153,7 @@ public class PomodoroFragment extends Fragment {
         editLong.setText(String.valueOf(currentLong));
 
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Adjust Durations")
+                .setTitle(getString(R.string.adjust_durations))
                 .setView(dialogView)
                 .setPositiveButton("Save", (dialog, which) -> {
                     String focusStr = editFocus.getText() != null ? editFocus.getText().toString().trim() : "";
@@ -162,7 +161,7 @@ public class PomodoroFragment extends Fragment {
                     String longStr = editLong.getText() != null ? editLong.getText().toString().trim() : "";
 
                     if (focusStr.isEmpty() || shortStr.isEmpty() || longStr.isEmpty()) {
-                        Toast.makeText(requireContext(), "Durations cannot be empty", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.durations_empty, Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -172,7 +171,7 @@ public class PomodoroFragment extends Fragment {
                         int newLong = Integer.parseInt(longStr);
 
                         if (newFocus <= 0 || newShort <= 0 || newLong <= 0) {
-                            Toast.makeText(requireContext(), "Durations must be greater than 0", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), R.string.durations_positive, Toast.LENGTH_SHORT).show();
                             return;
                         }
 
@@ -186,10 +185,10 @@ public class PomodoroFragment extends Fragment {
                         pauseTimer();
                         loadDurations();
                         resetTimer();
-                        Toast.makeText(requireContext(), "Durations updated", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.durations_updated, Toast.LENGTH_SHORT).show();
 
                     } catch (NumberFormatException e) {
-                        Toast.makeText(requireContext(), "Invalid number format", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.invalid_number_format, Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -211,13 +210,13 @@ public class PomodoroFragment extends Fragment {
                 timeLeftMillis = 0;
                 updateTimerText();
                 updateProgressBar();
-                binding.btnStartPause.setText("Start");
+                binding.btnStartPause.setText(getString(R.string.start));
                 triggerAlarm();
             }
         }.start();
 
         isTimerRunning = true;
-        binding.btnStartPause.setText("Pause");
+        binding.btnStartPause.setText(getString(R.string.pause));
     }
 
     private void pauseTimer() {
@@ -225,7 +224,7 @@ public class PomodoroFragment extends Fragment {
             countDownTimer.cancel();
         }
         isTimerRunning = false;
-        binding.btnStartPause.setText("Start");
+        binding.btnStartPause.setText(getString(R.string.start));
     }
 
     private void resetTimer() {
@@ -278,8 +277,8 @@ public class PomodoroFragment extends Fragment {
         sendTimerNotification();
 
         // 4. Show alert dialog to turn off the alarm
-        String title = "Timer Finished!";
-        String message = currentMode.equals("Focus") ? "Time to take a break!" : "Time to focus!";
+        String title = getString(R.string.timer_finished);
+        String message = currentMode.equals("Focus") ? getString(R.string.take_a_break) : getString(R.string.time_to_focus);
 
         if (getActivity() != null) {
             new MaterialAlertDialogBuilder(requireActivity())
@@ -311,7 +310,7 @@ public class PomodoroFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,
-                    CHANNEL_NAME,
+                    getString(R.string.pomodoro_notification_title),
                     NotificationManager.IMPORTANCE_HIGH
             );
             channel.enableVibration(true);
@@ -326,11 +325,11 @@ public class PomodoroFragment extends Fragment {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
-        String message = currentMode.equals("Focus") ? "Focus session completed. Take a break!" : "Break completed. Ready to focus?";
+        String message = currentMode.equals("Focus") ? getString(R.string.pomodoro_done_focus) : getString(R.string.pomodoro_done_break);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_timer)
-                .setContentTitle("Pomodoro Timer")
+                .setContentTitle(context.getString(R.string.pomodoro_notification_title))
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_ALARM)

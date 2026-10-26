@@ -106,6 +106,44 @@
     <color name="note_dark_blue">#1E3A5F</color>
     <color name="note_dark_purple">#42275E</color>
 
+    <!-- ==================== LF DESIGN TOKENS — SOFT & AIRY (LIGHT) ====================
+         Soft pastel palette: very light backgrounds, pastel card tints,
+         muted grey secondary text, single soft accent. Pairs with
+         values-night/colors.xml for automatic dark variants.
+    -->
+
+    <!-- Backgrounds & surfaces -->
+    <color name="lf_background">#FAFAFC</color>
+    <color name="lf_surface">#FFFFFF</color>
+    <color name="lf_surface_variant">#F3F2F8</color>
+
+    <!-- 5 pastel card tints + their deep companions (gradient ends / badge icons) -->
+    <color name="lf_pastel_mint">#DCF2E7</color>
+    <color name="lf_pastel_mint_deep">#C4E4D3</color>
+    <color name="lf_pastel_sky">#DEEAFB</color>
+    <color name="lf_pastel_sky_deep">#C3D9F4</color>
+    <color name="lf_pastel_lilac">#E9E5F9</color>
+    <color name="lf_pastel_lilac_deep">#D2C9F0</color>
+    <color name="lf_pastel_peach">#FBEBDD</color>
+    <color name="lf_pastel_peach_deep">#F2D6BB</color>
+    <color name="lf_pastel_rose">#F9E2EA</color>
+    <color name="lf_pastel_rose_deep">#F0CAD9</color>
+
+    <!-- Primary accent -->
+    <color name="lf_accent">#5B67E8</color>
+    <color name="lf_on_accent">#FFFFFF</color>
+    <color name="lf_accent_soft">#E9EBFC</color>
+
+    <!-- Text -->
+    <color name="lf_text_primary">#20202B</color>
+    <color name="lf_text_secondary">#75747F</color>
+
+    <!-- Hairline dividers (no shadows) -->
+    <color name="lf_hairline">#ECEBF2</color>
+
+    <!-- Translucent badge backing (sits on pastel card tints) -->
+    <color name="lf_badge_tint">#33FFFFFF</color>
+
     <!-- ==================== UTILITY ==================== -->
     <color name="swipe_delete_bg">#FFFF3B30</color>
     <color name="white">#FFFFFFFF</color>

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.lorenzflow.app.R;
 import com.lorenzflow.app.data.Note;
 import com.lorenzflow.app.databinding.ItemNoteBinding;
+import com.lorenzflow.app.util.AnimUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,6 +93,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
     @Override
     public void onBindViewHolder(@NonNull NoteViewHolder holder, int position) {
         holder.bind(notes.get(position));
+        holder.fadeIn(position);
     }
 
     @Override
@@ -101,10 +103,16 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
 
     class NoteViewHolder extends RecyclerView.ViewHolder {
         private final ItemNoteBinding binding;
+        private boolean animatedIn;
 
         NoteViewHolder(ItemNoteBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
+        }
+
+        /** Subtle fade-in, run once per ViewHolder instance. */
+        void fadeIn(int position) {
+            animatedIn = AnimUtil.fadeInOnce(binding.getRoot(), position, animatedIn);
         }
 
         void bind(Note note) {

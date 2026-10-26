@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Neutral card background (General category): soft surface-to-surface
+     wash instead of a pastel tint, 24dp-rounded like the pastel siblings. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:angle="270"
+        android:startColor="@color/lf_surface"
+        android:endColor="@color/lf_surface_variant"
+        android:type="linear" />
+    <corners android:radius="@dimen/lf_corner_card" />
+</shape>

@@ -53,12 +53,31 @@
     <!-- Theme -->
     <string name="toggle_theme">Toggle Theme</string>
 
+    <!-- Tasks screen header & quick actions -->
+    <string name="tasks_greeting">Good Day</string>
+    <string name="tasks_greeting_subtitle">Here\'s what\'s on your plate today</string>
+    <string name="my_tasks_section">My Tasks</string>
+    <string name="search_tasks_hint">Search tasks…</string>
+    <string name="cd_search_tasks">Search tasks</string>
+    <string name="quick_label_create">CREATE</string>
+    <string name="quick_label_capture">CAPTURE</string>
+    <string name="quick_label_focus">FOCUS</string>
+    <string name="quick_title_add_task">Add Task</string>
+    <string name="quick_title_new_note">New Note</string>
+    <string name="quick_title_start_focus">Start Focus</string>
+    <string name="cd_quick_add_task">Add a new task</string>
+    <string name="cd_quick_new_note">Create a new note</string>
+    <string name="cd_quick_start_focus">Start a focus session</string>
+
     <!-- PDF -->
     <string name="pdf_exported">Tasks exported to Documents folder</string>
     <string name="pdf_export_failed">Failed to export PDF</string>
     <string name="pdf_no_tasks">No active tasks to export</string>
 
     <!-- Notifications -->
+    <string name="notifications_denied_title">Reminders are turned off</string>
+    <string name="notifications_denied_message">Lorenz Flow needs notification permission to remind you about task deadlines and finished Pomodoro sessions.</string>
+    <string name="open_notification_settings">Open Settings</string>
     <string name="notification_channel_name">Task Deadlines</string>
     <string name="notification_channel_desc">Reminders for upcoming task deadlines</string>
     <string name="task_deadline_notification">Task deadline: %1$s</string>
@@ -85,9 +104,102 @@
     <string name="settings_notifications_desc">Get reminders for task deadlines</string>
     <string name="settings_notifications_enable">Enable task reminders</string>
 
+    <!-- Screen headers (soft & airy restyle) -->
+    <string name="my_notes_title">My Notes</string>
+    <string name="my_notes_subtitle">Your ideas, right where you left them</string>
+    <string name="calendar_title">Calendar</string>
+    <string name="tasks_due_today">Tasks due today</string>
+    <string name="no_tasks_due_day">No tasks due on this day</string>
+    <string name="pm_title">Password Manager</string>
+    <string name="pm_subtitle">Your vault of secure credentials</string>
+    <string name="pm_search_hint">Search accounts…</string>
+    <string name="pm_empty_passwords">No passwords stored yet.\nTap + to secure your first password!</string>
+    <string name="settings_profile_title">My Profile</string>
+    <string name="settings_profile_desc">View and edit profile details</string>
+    <string name="settings_pm_title">Password Manager</string>
+    <string name="settings_pm_desc">Securely store and manage your passwords</string>
+    <string name="settings_about_desc">Credits, contacts, and legal info</string>
+
     <!-- Content descriptions -->
     <string name="cd_profile_picture">Profile picture</string>
     <string name="cd_add_button">Add new item</string>
     <string name="cd_theme_toggle">Toggle dark/light mode</string>
     <string name="cd_expand_completed">Toggle completed tasks visibility</string>
+    <!-- Fragments: dialogs & actions (moved from hardcoded Java literals) -->
+    <string name="edit_task">Edit Task</string>
+    <string name="edit_note">Edit Note</string>
+    <string name="transfer_task_to">Transfer Task to...</string>
+    <string name="delete_task_confirm">Delete task \"%1$s\"?</string>
+    <string name="delete_note_confirm">Delete \"%1$s\"?</string>
+    <string name="permanently_delete_confirm">Permanently delete \"%1$s\"?</string>
+    <string name="delete_all_archived_tasks_confirm">Permanently delete all archived tasks?</string>
+    <string name="this_note">this note</string>
+    <string name="clear_completed_title">Clear Completed Tasks</string>
+    <string name="clear_completed_message">Are you sure you want to permanently delete all completed tasks?</string>
+    <string name="clear_all">Clear All</string>
+    <string name="tasks_due_on">Tasks due on %1$s</string>
+    <string name="failed_to_save_profile_picture">Failed to save profile picture</string>
+    <string name="feedback_subject">Lorenz Flow Feedback</string>
+    <string name="no_browser_found">No browser found to open link</string>
+    <string name="no_email_client">No email client found</string>
+
+    <!-- Password manager -->
+    <string name="auth_failed">Authentication failed</string>
+    <string name="pm_lock_title">Lorenz Flow Secure Lock</string>
+    <string name="pm_lock_desc">Authenticate to access Password Manager</string>
+    <string name="pm_pin_hint_setup">Set 4-Digit Master PIN</string>
+    <string name="pm_pin_hint_enter">Enter Master PIN</string>
+    <string name="secure_setup_title">Secure Setup</string>
+    <string name="secure_setup_message">Your device is not secured. Please set a custom Master PIN to secure your passwords.</string>
+    <string name="set_pin">Set PIN</string>
+    <string name="pin_too_short">PIN must be at least 4 digits</string>
+    <string name="pin_set_success">Master PIN Set successfully</string>
+    <string name="unlock_password_manager">Unlock Password Manager</string>
+    <string name="unlock">Unlock</string>
+    <string name="incorrect_pin">Incorrect PIN</string>
+    <string name="add_credential">Add Credential</string>
+    <string name="pm_fields_required">All fields must be filled</string>
+    <string name="secure_password_generated">Secure Password generated!</string>
+    <string name="error_encrypting_password">Error encrypting password</string>
+    <string name="error_decrypting_password">Error decrypting password</string>
+    <string name="decrypt_error">Error decrypting</string>
+    <string name="pm_delete_password_title">Delete Password</string>
+    <string name="pm_delete_password_confirm">Are you sure you want to permanently delete credentials for \"%1$s\"?</string>
+    <string name="password_copied">Password copied to clipboard</string>
+    <string name="username_copied">Username copied to clipboard</string>
+
+    <!-- Pomodoro -->
+    <string name="pomodoro_status_focus">Focus Session</string>
+    <string name="pomodoro_status_short">Short Break</string>
+    <string name="pomodoro_status_long">Long Break</string>
+    <string name="start">Start</string>
+    <string name="pause">Pause</string>
+    <string name="timer_finished">Timer Finished!</string>
+    <string name="take_a_break">Time to take a break!</string>
+    <string name="time_to_focus">Time to focus!</string>
+    <string name="adjust_durations">Adjust Durations</string>
+    <string name="durations_empty">Durations cannot be empty</string>
+    <string name="durations_positive">Durations must be greater than 0</string>
+    <string name="durations_updated">Durations updated</string>
+    <string name="invalid_number_format">Invalid number format</string>
+    <string name="pomodoro_notification_title">Pomodoro Timer</string>
+    <string name="pomodoro_done_focus">Focus session completed. Take a break!</string>
+    <string name="pomodoro_done_break">Break completed. Ready to focus?</string>
+
+    <!-- PDF export -->
+    <string name="pdf_title">Lorenz Flow — Active Tasks</string>
+    <string name="pdf_generated_on">Generated on %1$s</string>
+    <string name="pdf_col_task">TASK</string>
+    <string name="pdf_col_deadline">DEADLINE</string>
+    <string name="pdf_no_deadline">No deadline</string>
+    <string name="pdf_total_tasks">Total active tasks: %1$d</string>
+    <string name="pdf_footer_version">Lorenz Flow v1.0.0</string>
+
+    <!-- Tasks hero card ("Today's focus") -->
+    <string name="hero_today_label">Today’s focus</string>
+    <plurals name="hero_tasks_due">
+        <item quantity="one">task due today</item>
+        <item quantity="other">tasks due today</item>
+    </plurals>
+
 </resources>
