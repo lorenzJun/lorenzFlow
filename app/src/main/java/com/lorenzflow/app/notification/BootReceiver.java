@@ -1,14 +1,12 @@
 package com.lorenzflow.app.notification;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 
 import com.lorenzflow.app.data.AppDatabase;
 import com.lorenzflow.app.data.Task;
+import com.lorenzflow.app.util.AlarmScheduler;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -24,47 +22,27 @@ public class BootReceiver extends BroadcastReceiver {
             return;
         }
 
-        // Re-register alarms on a background thread
+        // goAsync() keeps the process alive while the executor finishes the
+        // DB read; finish() is always called so the system can recycle the
+        // receiver.
+        final BroadcastReceiver.PendingResult pendingResult = goAsync();
         Executors.newSingleThreadExecutor().execute(() -> {
-            AppDatabase db = AppDatabase.getInstance(context);
-            List<Task> tasks = db.taskDao().getActiveTasksWithDeadline();
-            long now = System.currentTimeMillis();
+            try {
+                AppDatabase db = AppDatabase.getInstance(context);
+                List<Task> tasks = db.taskDao().getActiveTasksWithDeadline();
+                long now = System.currentTimeMillis();
 
-            for (Task task : tasks) {
-                if (task.getDeadline() > now) {
-                    scheduleAlarm(context, task);
+                for (Task task : tasks) {
+                    // Re-register each pending deadline alarm on this thread
+                    if (task.getDeadline() > now) {
+                        AlarmScheduler.scheduleAlarm(context, task);
+                    }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                pendingResult.finish();
             }
         });
-    }
-
-    private void scheduleAlarm(Context context, Task task) {
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        if (alarmManager == null) return;
-
-        Intent alarmIntent = new Intent(context, AlarmReceiver.class);
-        alarmIntent.putExtra(AlarmReceiver.EXTRA_TASK_ID, (int) task.getId());
-        alarmIntent.putExtra(AlarmReceiver.EXTRA_TASK_TITLE, task.getTitle());
-
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                context,
-                (int) task.getId(),
-                alarmIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-        );
-
-        // Try exact alarm, fall back to inexact if permission not granted
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (alarmManager.canScheduleExactAlarms()) {
-                alarmManager.setExactAndAllowWhileIdle(
-                        AlarmManager.RTC_WAKEUP, task.getDeadline(), pendingIntent);
-            } else {
-                alarmManager.setAndAllowWhileIdle(
-                        AlarmManager.RTC_WAKEUP, task.getDeadline(), pendingIntent);
-            }
-        } else {
-            alarmManager.setExactAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP, task.getDeadline(), pendingIntent);
-        }
     }
 }

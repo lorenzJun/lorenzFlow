@@ -1,12 +1,8 @@
 package com.lorenzflow.app.ui;
 
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +22,7 @@ import com.lorenzflow.app.data.Task;
 import com.lorenzflow.app.data.TaskDao;
 import com.lorenzflow.app.databinding.DialogAddTaskBinding;
 import com.lorenzflow.app.databinding.FragmentCalendarBinding;
-import com.lorenzflow.app.notification.AlarmReceiver;
+import com.lorenzflow.app.util.AlarmScheduler;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -137,9 +133,9 @@ public class CalendarFragment extends Fragment implements TaskAdapter.OnTaskActi
         Executors.newSingleThreadExecutor().execute(() -> {
             taskDao.update(task);
             if (isChecked) {
-                cancelAlarm(task);
+                AlarmScheduler.cancelAlarm(requireContext(), task);
             } else if (task.getDeadline() > System.currentTimeMillis()) {
-                scheduleAlarm(task);
+                AlarmScheduler.scheduleAlarm(requireContext(), task);
             }
             // Reload all tasks from database and refresh
             loadAllTasks();
@@ -180,7 +176,7 @@ public class CalendarFragment extends Fragment implements TaskAdapter.OnTaskActi
         task.setArchived(true);
         Executors.newSingleThreadExecutor().execute(() -> {
             taskDao.update(task);
-            cancelAlarm(task);
+            AlarmScheduler.cancelAlarm(requireContext(), task);
             if (getActivity() == null) return;
             requireActivity().runOnUiThread(() -> {
                 loadAllTasks();
@@ -190,7 +186,7 @@ public class CalendarFragment extends Fragment implements TaskAdapter.OnTaskActi
                             Executors.newSingleThreadExecutor().execute(() -> {
                                 taskDao.update(task);
                                 if (task.getDeadline() > 0 && task.getDeadline() > System.currentTimeMillis() && !task.isCompleted()) {
-                                    scheduleAlarm(task);
+                                    AlarmScheduler.scheduleAlarm(requireContext(), task);
                                 }
                                 if (getActivity() != null) {
                                     requireActivity().runOnUiThread(CalendarFragment.this::loadAllTasks);
@@ -291,9 +287,9 @@ public class CalendarFragment extends Fragment implements TaskAdapter.OnTaskActi
 
                     Executors.newSingleThreadExecutor().execute(() -> {
                         taskDao.update(task);
-                        cancelAlarm(task);
+                        AlarmScheduler.cancelAlarm(requireContext(), task);
                         if (task.getDeadline() > System.currentTimeMillis() && !task.isCompleted()) {
-                            scheduleAlarm(task);
+                            AlarmScheduler.scheduleAlarm(requireContext(), task);
                         }
                         loadAllTasks();
                     });
@@ -310,7 +306,7 @@ public class CalendarFragment extends Fragment implements TaskAdapter.OnTaskActi
                 .setPositiveButton(R.string.delete, (dialog, which) -> {
                     Executors.newSingleThreadExecutor().execute(() -> {
                         taskDao.delete(task);
-                        cancelAlarm(task);
+                        AlarmScheduler.cancelAlarm(requireContext(), task);
                         if (getActivity() != null) {
                             requireActivity().runOnUiThread(() -> {
                                 Toast.makeText(requireContext(), R.string.task_deleted, Toast.LENGTH_SHORT).show();
@@ -321,47 +317,6 @@ public class CalendarFragment extends Fragment implements TaskAdapter.OnTaskActi
                 })
                 .setNegativeButton(R.string.cancel, null)
                 .show();
-    }
-
-    // ==================== ALARM MANAGEMENT ====================
-
-    private void scheduleAlarm(Task task) {
-        Context ctx = requireContext().getApplicationContext();
-        AlarmManager alarmManager = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
-        if (alarmManager == null) return;
-
-        Intent intent = new Intent(ctx, AlarmReceiver.class);
-        intent.putExtra(AlarmReceiver.EXTRA_TASK_ID, (int) task.getId());
-        intent.putExtra(AlarmReceiver.EXTRA_TASK_TITLE, task.getTitle());
-
-        PendingIntent pi = PendingIntent.getBroadcast(
-                ctx, (int) task.getId(), intent,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (alarmManager.canScheduleExactAlarms()) {
-                alarmManager.setExactAndAllowWhileIdle(
-                        AlarmManager.RTC_WAKEUP, task.getDeadline(), pi);
-            } else {
-                alarmManager.setAndAllowWhileIdle(
-                        AlarmManager.RTC_WAKEUP, task.getDeadline(), pi);
-            }
-        } else {
-            alarmManager.setExactAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP, task.getDeadline(), pi);
-        }
-    }
-
-    private void cancelAlarm(Task task) {
-        Context ctx = requireContext().getApplicationContext();
-        AlarmManager alarmManager = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
-        if (alarmManager == null) return;
-
-        Intent intent = new Intent(ctx, AlarmReceiver.class);
-        PendingIntent pi = PendingIntent.getBroadcast(
-                ctx, (int) task.getId(), intent,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        alarmManager.cancel(pi);
     }
 
     @Override

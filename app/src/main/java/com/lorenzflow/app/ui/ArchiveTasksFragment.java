@@ -18,6 +18,7 @@ import com.lorenzflow.app.data.Task;
 import com.lorenzflow.app.data.TaskDao;
 import com.lorenzflow.app.databinding.FragmentArchiveTasksBinding;
 import com.lorenzflow.app.databinding.ItemArchivedTaskBinding;
+import com.lorenzflow.app.util.AlarmScheduler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,6 +78,13 @@ public class ArchiveTasksFragment extends Fragment {
         task.setArchived(false);
         Executors.newSingleThreadExecutor().execute(() -> {
             taskDao.update(task);
+
+            // Re-schedule the deadline alarm, mirroring TasksFragment's
+            // undo-restore: only for incomplete tasks with a future deadline
+            if (!task.isCompleted() && task.getDeadline() > System.currentTimeMillis()) {
+                AlarmScheduler.scheduleAlarm(requireContext(), task);
+            }
+
             if (getActivity() != null) {
                 requireActivity().runOnUiThread(this::loadArchivedTasks);
             }

@@ -4,11 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    app:cardCornerRadius="12dp"
+    android:layout_marginBottom="@dimen/lf_spacing_sm"
+    app:cardCornerRadius="@dimen/lf_corner_card"
     app:cardElevation="0dp"
-    app:strokeWidth="0dp"
-    app:cardBackgroundColor="?attr/colorSurface">
+    app:cardBackgroundColor="?attr/colorSurface"
+    app:strokeColor="@color/lf_hairline"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,7 +24,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/ic_archive"
-            app:tint="@color/ios_secondary_label"
+            app:tint="@color/lf_text_secondary"
             android:alpha="0.5"
             android:importantForAccessibility="no"
             android:layout_marginEnd="12dp" />
@@ -40,8 +41,9 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="17sp"
+                android:textColor="@color/lf_text_primary"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 android:fontFamily="sans-serif"
                 android:alpha="0.75" />
 
@@ -52,7 +54,7 @@
                 android:layout_marginTop="2dp"
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:textColor="@color/ios_secondary_label"
+                android:textColor="@color/lf_text_secondary"
                 android:textSize="14sp"
                 android:fontFamily="sans-serif"
                 android:visibility="gone" />
@@ -63,11 +65,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:background="@drawable/badge_background"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="2dp"
-                android:textColor="@color/white"
-                android:textSize="11sp"
-                android:fontFamily="sans-serif-medium"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="3dp"
+                android:textColor="@color/lf_text_primary"
+                android:textAppearance="@style/TextAppearance.LF.Caption"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -79,7 +80,7 @@
             android:layout_height="40dp"
             android:src="@drawable/ic_unarchive"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="@color/ios_blue"
+            app:tint="@color/lf_accent"
             android:contentDescription="@string/unarchive"
             android:layout_marginStart="8dp" />
 
@@ -90,7 +91,7 @@
             android:layout_height="40dp"
             android:src="@drawable/ic_delete"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="@color/ios_secondary_label"
+            app:tint="@color/lf_text_secondary"
             android:contentDescription="@string/delete"
             android:layout_marginStart="4dp" />
 

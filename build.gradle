@@ -1,4 +1,5 @@
 // Top-level build file for Lorenz Flow
 plugins {
     id 'com.android.application' version '9.3.3' apply false
+    id 'androidx.room' version '2.6.1' apply false
 }

@@ -23,9 +23,6 @@
 
     <dimen name="note_grid_spacing">8dp</dimen>
 
-    <!-- iOS standard row height -->
-    <dimen name="ios_row_height">44dp</dimen>
-
     <!-- ==================== LF SPACING SCALE (8/12/16/24) ==================== -->
     <dimen name="lf_spacing_sm">8dp</dimen>
     <dimen name="lf_spacing_md">12dp</dimen>

@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/ios_grouped_background"
+    android:background="@color/lf_background"
     android:fillViewport="true">
 
     <LinearLayout
@@ -12,14 +12,15 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:paddingHorizontal="@dimen/lf_screen_padding"
+        android:paddingVertical="16dp">
 
-        <!-- App icon area — iOS-style rounded icon -->
+        <!-- App icon — accent badge, 24dp corners, no shadow -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="80dp"
             android:layout_height="80dp"
-            app:cardCornerRadius="18dp"
-            app:cardBackgroundColor="@color/ios_blue"
+            app:cardCornerRadius="@dimen/lf_corner_card"
+            app:cardBackgroundColor="@color/lf_accent"
             app:strokeWidth="0dp"
             app:cardElevation="0dp"
             android:layout_marginTop="24dp">
@@ -29,7 +30,7 @@
                 android:layout_height="44dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_tasks"
-                app:tint="@android:color/white"
+                app:tint="@color/lf_on_accent"
                 android:importantForAccessibility="no" />
 
         </com.google.android.material.card.MaterialCardView>
@@ -40,10 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="@string/app_name"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:fontFamily="sans-serif-medium"
-            android:textColor="?attr/colorOnBackground" />
+            android:textAppearance="@style/TextAppearance.LF.Heading" />
 
         <!-- Version -->
         <TextView
@@ -51,28 +49,25 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="@string/about_version"
-            android:textSize="13sp"
-            android:fontFamily="sans-serif"
-            android:textColor="@color/ios_secondary_label" />
+            android:textAppearance="@style/TextAppearance.LF.Caption" />
 
-        <!-- Description in card -->
+        <!-- Description in 24dp card with hairline stroke -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            app:cardCornerRadius="12dp"
+            app:cardCornerRadius="@dimen/lf_corner_card"
             app:cardElevation="0dp"
-            app:strokeWidth="0dp"
-            app:cardBackgroundColor="?attr/colorSurface">
+            app:cardBackgroundColor="?attr/colorSurface"
+            app:strokeColor="@color/lf_hairline"
+            app:strokeWidth="1dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
                 android:text="@string/about_description"
-                android:textSize="15sp"
-                android:fontFamily="sans-serif"
-                android:textColor="@color/ios_secondary_label"
+                android:textAppearance="@style/TextAppearance.LF.Caption"
                 android:lineSpacingMultiplier="1.4"
                 android:textAlignment="center" />
 
@@ -83,10 +78,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:cardCornerRadius="12dp"
+            app:cardCornerRadius="@dimen/lf_corner_card"
             app:cardElevation="0dp"
-            app:strokeWidth="0dp"
-            app:cardBackgroundColor="?attr/colorSurface">
+            app:cardBackgroundColor="?attr/colorSurface"
+            app:strokeColor="@color/lf_hairline"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -128,22 +124,20 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/about_creator"
-                            android:textSize="17sp"
-                            android:fontFamily="sans-serif-medium"
-                            android:textColor="?attr/colorOnSurface" />
+                            android:textAppearance="@style/TextAppearance.LF.Subheading" />
 
-                        <!-- Badge/Role — iOS-style capsule -->
+                        <!-- Badge/Role — soft capsule -->
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="@string/about_creator_role"
-                            android:textSize="11sp"
-                            android:fontFamily="sans-serif-medium"
-                            android:textColor="@color/ios_blue"
+                            android:textAppearance="@style/TextAppearance.LF.Caption"
+                            android:textColor="@color/lf_accent"
+                            android:textStyle="bold"
                             android:background="@drawable/badge_background"
-                            android:paddingHorizontal="8dp"
-                            android:paddingVertical="3dp" />
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp" />
 
                     </LinearLayout>
 
@@ -152,9 +146,9 @@
                 <!-- Thin separator -->
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
+                    android:layout_height="1dp"
                     android:layout_marginVertical="14dp"
-                    android:background="@color/ios_opaque_separator" />
+                    android:background="@color/lf_hairline" />
 
                 <!-- Education Info -->
                 <LinearLayout
@@ -168,7 +162,7 @@
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:src="@drawable/ic_school"
-                        app:tint="@color/ios_blue"
+                        app:tint="@color/lf_accent"
                         android:importantForAccessibility="no" />
 
                     <TextView
@@ -177,8 +171,8 @@
                         android:layout_weight="1"
                         android:layout_marginStart="12dp"
                         android:text="@string/about_creator_education"
-                        android:textColor="@color/ios_secondary_label"
-                        android:textSize="15sp"
+                        android:textColor="@color/lf_text_secondary"
+                        android:textSize="14sp"
                         android:fontFamily="sans-serif"
                         android:lineSpacingMultiplier="1.2" />
 
@@ -196,7 +190,7 @@
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:src="@drawable/ic_location"
-                        app:tint="@color/ios_blue"
+                        app:tint="@color/lf_accent"
                         android:importantForAccessibility="no" />
 
                     <TextView
@@ -205,8 +199,8 @@
                         android:layout_weight="1"
                         android:layout_marginStart="12dp"
                         android:text="@string/about_creator_location"
-                        android:textColor="@color/ios_secondary_label"
-                        android:textSize="15sp"
+                        android:textColor="@color/lf_text_secondary"
+                        android:textSize="14sp"
                         android:fontFamily="sans-serif" />
 
                 </LinearLayout>
@@ -228,7 +222,7 @@
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:src="@drawable/ic_facebook"
-                        app:tint="@color/ios_blue"
+                        app:tint="@color/lf_accent"
                         android:importantForAccessibility="no" />
 
                     <TextView
@@ -237,8 +231,8 @@
                         android:layout_weight="1"
                         android:layout_marginStart="12dp"
                         android:text="@string/about_creator_facebook"
-                        android:textColor="@color/ios_secondary_label"
-                        android:textSize="15sp"
+                        android:textColor="@color/lf_text_secondary"
+                        android:textSize="14sp"
                         android:fontFamily="sans-serif" />
 
                 </LinearLayout>
@@ -259,7 +253,7 @@
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:src="@drawable/ic_email"
-                        app:tint="@color/ios_blue"
+                        app:tint="@color/lf_accent"
                         android:importantForAccessibility="no" />
 
                     <TextView
@@ -268,8 +262,8 @@
                         android:layout_weight="1"
                         android:layout_marginStart="12dp"
                         android:text="@string/about_creator_email"
-                        android:textColor="@color/ios_secondary_label"
-                        android:textSize="15sp"
+                        android:textColor="@color/lf_text_secondary"
+                        android:textSize="14sp"
                         android:fontFamily="sans-serif" />
 
                 </LinearLayout>

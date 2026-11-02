@@ -10,11 +10,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Customize your session and break durations in minutes."
-        android:textSize="14sp"
-        android:textColor="@color/ios_secondary_label"
-        android:layout_marginBottom="16dp"
-        android:fontFamily="sans-serif"/>
+        android:text="@string/durations_intro"
+        android:textAppearance="@style/TextAppearance.LF.Caption"
+        android:layout_marginBottom="16dp"/>
 
     <!-- Focus Duration Input -->
     <com.google.android.material.textfield.TextInputLayout
@@ -23,13 +21,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
-        android:hint="Focus Duration (minutes)">
+        android:textColorHint="@color/lf_text_secondary"
+        android:hint="@string/durations_hint_focus"
+        app:boxCornerRadiusTopStart="16dp"
+        app:boxCornerRadiusTopEnd="16dp"
+        app:boxCornerRadiusBottomStart="16dp"
+        app:boxCornerRadiusBottomEnd="16dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_focus_mins"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number"
+            android:textColor="@color/lf_text_primary"
             android:fontFamily="sans-serif"/>
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -41,13 +45,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
-        android:hint="Short Break Duration (minutes)">
+        android:textColorHint="@color/lf_text_secondary"
+        android:hint="@string/durations_hint_short"
+        app:boxCornerRadiusTopStart="16dp"
+        app:boxCornerRadiusTopEnd="16dp"
+        app:boxCornerRadiusBottomStart="16dp"
+        app:boxCornerRadiusBottomEnd="16dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_short_mins"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number"
+            android:textColor="@color/lf_text_primary"
             android:fontFamily="sans-serif"/>
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -58,13 +68,19 @@
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Long Break Duration (minutes)">
+        android:textColorHint="@color/lf_text_secondary"
+        android:hint="@string/durations_hint_long"
+        app:boxCornerRadiusTopStart="16dp"
+        app:boxCornerRadiusTopEnd="16dp"
+        app:boxCornerRadiusBottomStart="16dp"
+        app:boxCornerRadiusBottomEnd="16dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_long_mins"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number"
+            android:textColor="@color/lf_text_primary"
             android:fontFamily="sans-serif"/>
 
     </com.google.android.material.textfield.TextInputLayout>

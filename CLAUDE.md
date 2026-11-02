@@ -71,3 +71,7 @@ Settings/About. Fully offline — no networking, no Firebase, no remote API.
   picker, category mapping, and scheduleAlarm/cancelAlarm helpers.
 - Profile, About, and the Archive screens, plus the add/edit dialogs, still use the older iOS
   styling instead of the `lf_*` soft-and-airy design tokens.
+
+> **Status at HEAD:** `goAsync()`, `restoreTask()` alarm re-scheduling and the `lf_*` migration for
+> Profile/About/Archive/dialogs are already done. Still open: the Pomodoro reset and the duplicated
+> task dialog in `TasksFragment`/`CalendarFragment` (alarm helpers now live in `util/AlarmScheduler`).

@@ -10,14 +10,14 @@
         <item name="colorOnSecondary">@color/lf_on_accent</item>
         <item name="colorSecondaryContainer">@color/lf_accent_soft</item>
         <item name="colorOnSecondaryContainer">@color/lf_text_primary</item>
-        <item name="colorTertiary">@color/md_theme_dark_tertiary</item>
-        <item name="colorOnTertiary">@color/md_theme_dark_onTertiary</item>
-        <item name="colorTertiaryContainer">@color/md_theme_dark_tertiaryContainer</item>
-        <item name="colorOnTertiaryContainer">@color/md_theme_dark_onTertiaryContainer</item>
-        <item name="colorError">@color/md_theme_dark_error</item>
-        <item name="colorOnError">@color/md_theme_dark_onError</item>
-        <item name="colorErrorContainer">@color/md_theme_dark_errorContainer</item>
-        <item name="colorOnErrorContainer">@color/md_theme_dark_onErrorContainer</item>
+        <item name="colorTertiary">#FF9F0A</item>
+        <item name="colorOnTertiary">#FFFFFF</item>
+        <item name="colorTertiaryContainer">#624A00</item>
+        <item name="colorOnTertiaryContainer">#FFDDB3</item>
+        <item name="colorError">#FF453A</item>
+        <item name="colorOnError">#FFFFFF</item>
+        <item name="colorErrorContainer">#93000A</item>
+        <item name="colorOnErrorContainer">#FFDAD6</item>
         <item name="android:colorBackground">@color/lf_background</item>
         <!-- Behind the transparent status bar → seamless edge-to-edge -->
         <item name="android:windowBackground">@color/lf_background</item>
@@ -28,8 +28,8 @@
         <item name="colorOnSurfaceVariant">@color/lf_text_secondary</item>
         <item name="colorOutline">@color/lf_hairline</item>
         <item name="colorOutlineVariant">@color/lf_hairline</item>
-        <item name="colorSurfaceInverse">@color/md_theme_dark_inverseSurface</item>
-        <item name="colorOnSurfaceInverse">@color/md_theme_dark_inverseOnSurface</item>
+        <item name="colorSurfaceInverse">#F2F2F7</item>
+        <item name="colorOnSurfaceInverse">#1C1C1E</item>
 
         <!-- Shape system: pill-shaped small components (chips, search bars,
              buttons), 24dp-rounded medium/large components (cards, sheets). -->

@@ -10,19 +10,19 @@
 
     <item
         android:id="@+id/action_sort"
-        android:title="Sort Tasks"
+        android:title="@string/sort_tasks"
         android:icon="@drawable/ic_sort"
         app:showAsAction="ifRoom">
         <menu>
             <item
                 android:id="@+id/sort_deadline"
-                android:title="By Deadline" />
+                android:title="@string/sort_by_deadline" />
             <item
                 android:id="@+id/sort_newest"
-                android:title="By Newest" />
+                android:title="@string/sort_by_newest" />
             <item
                 android:id="@+id/sort_oldest"
-                android:title="By Oldest" />
+                android:title="@string/sort_by_oldest" />
         </menu>
     </item>
     <item

@@ -4,23 +4,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/ios_grouped_background">
+    android:background="@color/lf_background">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Toolbar -->
+        <!-- Toolbar — transparent over lf_background, no shadow -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/archive_notes_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorSurface"
-            android:elevation="2dp"
+            android:background="@color/lf_background"
+            android:elevation="0dp"
             app:title="@string/view_archive"
             app:navigationIcon="@drawable/ic_expand_less"
-            app:titleTextAppearance="@style/TextAppearance.Material3.TitleMedium" />
+            app:titleTextAppearance="@style/TextAppearance.LorenzFlow.Toolbar.Title" />
 
         <!-- Empty state -->
         <LinearLayout
@@ -38,7 +38,7 @@
                 android:layout_height="72dp"
                 android:src="@drawable/ic_archive"
                 android:alpha="0.3"
-                app:tint="@color/ios_secondary_label"
+                app:tint="@color/lf_text_secondary"
                 android:importantForAccessibility="no" />
 
             <TextView
@@ -47,9 +47,7 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/no_archived_notes"
                 android:textAlignment="center"
-                android:textColor="@color/ios_secondary_label"
-                android:textSize="15sp"
-                android:fontFamily="sans-serif" />
+                android:textAppearance="@style/TextAppearance.LF.Caption" />
 
         </LinearLayout>
 

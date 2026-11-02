@@ -202,4 +202,55 @@
         <item quantity="other">tasks due today</item>
     </plurals>
 
+    <!-- Navigation (from bottom_nav_menu.xml) -->
+    <string name="nav_calendar">Calendar</string>
+    <string name="nav_timer">Timer</string>
+
+    <!-- Categories & filters (from layout literals; DB values stay as plain strings in Java) -->
+    <string name="category_label">Category</string>
+    <string name="filter_all">All</string>
+    <string name="cat_general">General</string>
+    <string name="cat_work">Work</string>
+    <string name="cat_personal">Personal</string>
+    <string name="cat_school">School</string>
+    <string name="cat_wellness">Wellness</string>
+    <string name="cat_urgent">Urgent</string>
+    <string name="archived_tasks">Archived Tasks</string>
+    <string name="add_symbol">+</string>
+
+    <!-- Tasks toolbar menu (from menu_tasks.xml) -->
+    <string name="sort_tasks">Sort Tasks</string>
+    <string name="sort_by_deadline">By Deadline</string>
+    <string name="sort_by_newest">By Newest</string>
+    <string name="sort_by_oldest">By Oldest</string>
+
+    <!-- Pomodoro buttons (from layout literals) -->
+    <string name="pomo_mode_focus">Focus</string>
+    <string name="pomo_mode_short">Short Break</string>
+    <string name="pomo_mode_long">Long Break</string>
+    <string name="timer_placeholder">25:00</string>
+    <string name="reset_timer">Reset</string>
+
+    <!-- Durations dialog (from layout literals) -->
+    <string name="durations_intro">Customize your session and break durations in minutes.</string>
+    <string name="durations_hint_focus">Focus Duration (minutes)</string>
+    <string name="durations_hint_short">Short Break Duration (minutes)</string>
+    <string name="durations_hint_long">Long Break Duration (minutes)</string>
+
+    <!-- Add-password dialog (from layout literals) -->
+    <string name="pm_hint_app_name">App or Website Name (e.g. Google)</string>
+    <string name="pm_hint_username">Username or Email</string>
+    <string name="pm_hint_password">Password</string>
+    <string name="pm_generate_password">Generate Strong Password</string>
+
+    <!-- Password item labels (from item_password.xml) -->
+    <string name="pm_username_label">USERNAME</string>
+    <string name="pm_password_label">PASSWORD</string>
+    <string name="pm_password_dots">••••••••••••</string>
+    <string name="cd_delete_saved_password">Delete saved password</string>
+    <string name="cd_copy_username">Copy username</string>
+    <string name="cd_toggle_password_visibility">Toggle password visibility</string>
+    <string name="cd_copy_password">Copy password</string>
+    <string name="cd_share_task">Share or transfer task</string>
+
 </resources>

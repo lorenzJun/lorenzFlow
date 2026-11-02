@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {Task.class, Note.class, PasswordEntry.class}, version = 4, exportSchema = false)
+@Database(entities = {Task.class, Note.class, PasswordEntry.class}, version = 4, exportSchema = true)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static volatile AppDatabase INSTANCE;

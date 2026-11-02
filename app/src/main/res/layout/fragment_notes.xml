@@ -112,7 +112,7 @@
         android:layout_marginEnd="@dimen/lf_screen_padding"
         android:layout_marginBottom="@dimen/lf_screen_padding"
         android:elevation="0dp"
-        android:text="+"
+        android:text="@string/add_symbol"
         android:textSize="28sp"
         android:textColor="@color/lf_on_accent"
         android:textStyle="normal"

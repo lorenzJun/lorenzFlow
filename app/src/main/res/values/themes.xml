@@ -10,14 +10,14 @@
         <item name="colorOnSecondary">@color/lf_on_accent</item>
         <item name="colorSecondaryContainer">@color/lf_accent_soft</item>
         <item name="colorOnSecondaryContainer">@color/lf_text_primary</item>
-        <item name="colorTertiary">@color/md_theme_light_tertiary</item>
-        <item name="colorOnTertiary">@color/md_theme_light_onTertiary</item>
-        <item name="colorTertiaryContainer">@color/md_theme_light_tertiaryContainer</item>
-        <item name="colorOnTertiaryContainer">@color/md_theme_light_onTertiaryContainer</item>
-        <item name="colorError">@color/md_theme_light_error</item>
-        <item name="colorOnError">@color/md_theme_light_onError</item>
-        <item name="colorErrorContainer">@color/md_theme_light_errorContainer</item>
-        <item name="colorOnErrorContainer">@color/md_theme_light_onErrorContainer</item>
+        <item name="colorTertiary">#FF9500</item>
+        <item name="colorOnTertiary">#FFFFFF</item>
+        <item name="colorTertiaryContainer">#FFDDB3</item>
+        <item name="colorOnTertiaryContainer">#2A1800</item>
+        <item name="colorError">#FF3B30</item>
+        <item name="colorOnError">#FFFFFF</item>
+        <item name="colorErrorContainer">#FFDAD6</item>
+        <item name="colorOnErrorContainer">#410002</item>
         <item name="android:colorBackground">@color/lf_background</item>
         <!-- Behind the transparent status bar → seamless edge-to-edge -->
         <item name="android:windowBackground">@color/lf_background</item>
@@ -28,8 +28,8 @@
         <item name="colorOnSurfaceVariant">@color/lf_text_secondary</item>
         <item name="colorOutline">@color/lf_hairline</item>
         <item name="colorOutlineVariant">@color/lf_hairline</item>
-        <item name="colorSurfaceInverse">@color/md_theme_light_inverseSurface</item>
-        <item name="colorOnSurfaceInverse">@color/md_theme_light_inverseOnSurface</item>
+        <item name="colorSurfaceInverse">#2C2C2E</item>
+        <item name="colorOnSurfaceInverse">#F2F2F7</item>
 
         <!-- Shape system: pill-shaped small components (chips, search
              bars, buttons), 24dp-rounded medium/large components (cards,
@@ -40,7 +40,7 @@
 
         <!-- Soft & airy status bar -->
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@color/md_theme_light_surface</item>
+        <item name="android:navigationBarColor">@color/lf_surface</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
@@ -61,24 +61,6 @@
         <item name="cardCornerRadius">@dimen/lf_corner_card</item>
         <item name="cardElevation">0dp</item>
         <item name="strokeWidth">0dp</item>
-    </style>
-
-    <!-- iOS-style card for grouped content -->
-    <style name="Widget.LorenzFlow.CardView.Grouped" parent="Widget.Material3.CardView.Filled">
-        <item name="cardCornerRadius">10dp</item>
-        <item name="cardElevation">0dp</item>
-        <item name="cardBackgroundColor">@color/ios_secondary_grouped_background</item>
-    </style>
-
-    <!-- FAB style (kept for backward compatibility) -->
-    <style name="Widget.LorenzFlow.FAB" parent="Widget.Material3.FloatingActionButton.Primary">
-        <item name="shapeAppearance">@style/ShapeAppearance.LorenzFlow.FAB</item>
-        <item name="backgroundTint">@color/ios_blue</item>
-        <item name="tint">@android:color/white</item>
-    </style>
-
-    <style name="ShapeAppearance.LorenzFlow.FAB" parent="ShapeAppearance.Material3.Corner.Full">
-        <item name="cornerSize">50%</item>
     </style>
 
     <!-- iOS-style bottom navigation -->

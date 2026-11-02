@@ -389,7 +389,7 @@
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="All"
+                    android:text="@string/filter_all"
                     android:checked="true" />
 
                 <com.google.android.material.chip.Chip
@@ -397,42 +397,42 @@
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="General" />
+                    android:text="@string/cat_general" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/filter_work"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Work" />
+                    android:text="@string/cat_work" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/filter_personal"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Personal" />
+                    android:text="@string/cat_personal" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/filter_school"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="School" />
+                    android:text="@string/cat_school" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/filter_wellness"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Wellness" />
+                    android:text="@string/cat_wellness" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/filter_urgent"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Urgent" />
+                    android:text="@string/cat_urgent" />
 
             </com.google.android.material.chip.ChipGroup>
 
@@ -546,7 +546,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/clear_all"
-                            android:textColor="@color/ios_red"
+                            android:textColor="?attr/colorError"
                             android:textSize="12sp" />
 
                     </LinearLayout>
@@ -578,7 +578,7 @@
         android:layout_marginEnd="@dimen/lf_screen_padding"
         android:layout_marginBottom="@dimen/lf_screen_padding"
         android:elevation="0dp"
-        android:text="+"
+        android:text="@string/add_symbol"
         android:textSize="28sp"
         android:textColor="@color/lf_on_accent"
         android:textStyle="normal"

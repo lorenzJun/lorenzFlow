@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'androidx.room'
 }
 
 android {
@@ -26,10 +27,22 @@ android {
         viewBinding true
     }
 
+    sourceSets {
+        androidTest {
+            assets.srcDirs += files("$projectDir/schemas")
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+}
+
+// Room schema export — checked into git so MigrationTestHelper can
+// validate historical migrations (see androidTest MigrationTest).
+room {
+    schemaDirectory "$projectDir/schemas"
 }
 
 dependencies {
@@ -37,6 +50,7 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test:runner:1.5.2'
+    androidTestImplementation 'androidx.room:room-testing:2.6.1'
 
     // AndroidX Core
     implementation 'androidx.appcompat:appcompat:1.6.1'
