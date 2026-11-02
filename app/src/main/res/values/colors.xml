@@ -1,24 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- ==================== NOTE COLORS (LIGHT) ==================== -->
-    <color name="note_default">#FFFFFF</color>
-    <color name="note_red">#FACDCD</color>
-    <color name="note_orange">#FFE0B2</color>
-    <color name="note_yellow">#FFF9C4</color>
-    <color name="note_green">#C8E6C9</color>
-    <color name="note_teal">#B2DFDB</color>
-    <color name="note_blue">#BBDEFB</color>
-    <color name="note_purple">#E1BEE7</color>
 
-    <!-- ==================== NOTE COLORS (DARK) ==================== -->
-    <color name="note_dark_default">#2C2C2E</color>
-    <color name="note_dark_red">#5C2B29</color>
-    <color name="note_dark_orange">#614A19</color>
-    <color name="note_dark_yellow">#635D19</color>
-    <color name="note_dark_green">#2D4A2E</color>
-    <color name="note_dark_teal">#16504B</color>
-    <color name="note_dark_blue">#1E3A5F</color>
-    <color name="note_dark_purple">#42275E</color>
 
     <!-- ==================== LF DESIGN TOKENS — SOFT & AIRY (LIGHT) ====================
          Soft pastel palette: very light backgrounds, pastel card tints,
@@ -59,8 +41,6 @@
     <color name="lf_badge_tint">#33FFFFFF</color>
 
     <!-- ==================== UTILITY ==================== -->
-    <color name="swipe_delete_bg">#FFFF3B30</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="black">#FF000000</color>
     <color name="ic_launcher_background">#007AFF</color>
 </resources>

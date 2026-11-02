@@ -3,9 +3,10 @@ package com.lorenzflow.app.notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
+import android.provider.Settings;
 
 import androidx.core.app.NotificationCompat;
 
@@ -16,9 +17,12 @@ public class NotificationHelper {
 
     public static final String CHANNEL_ID = "Task_Deadlines";
 
+    private NotificationHelper() {
+    }
+
     /**
      * Creates the notification channel. Safe to call multiple times;
-     * the system ignores if the channel already exists.
+     * the system ignores it if the channel already exists.
      */
     public static void createNotificationChannel(Context context) {
         NotificationChannel channel = new NotificationChannel(
@@ -37,26 +41,26 @@ public class NotificationHelper {
     }
 
     /**
-     * Shows a deadline notification for the given task.
-     *
-     * @param context    Application context
-     * @param taskId     Unique task ID used as notification ID
-     * @param taskTitle  Title of the task to display
-     */
-    /**
      * Opens the system screen where the user can grant app notifications.
      * Safe to call on any API 26+ device (app minSdk).
      */
     public static void openNotificationSettings(Context context) {
-        Intent intent = new Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-                .putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, context.getPackageName());
+        Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                .putExtra(Settings.EXTRA_APP_PACKAGE, context.getPackageName());
         try {
             context.startActivity(intent);
-        } catch (android.content.ActivityNotFoundException | SecurityException e) {
+        } catch (ActivityNotFoundException | SecurityException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Shows a deadline notification for the given task.
+     *
+     * @param context   Application context
+     * @param taskId    Unique task ID used as notification ID
+     * @param taskTitle Title of the task to display
+     */
     public static void showTaskNotification(Context context, int taskId, String taskTitle) {
         createNotificationChannel(context);
 

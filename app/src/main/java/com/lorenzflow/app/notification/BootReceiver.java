@@ -8,6 +8,7 @@ import com.lorenzflow.app.data.AppDatabase;
 import com.lorenzflow.app.data.Task;
 import com.lorenzflow.app.util.AlarmScheduler;
 
+import com.lorenzflow.app.util.AppExecutors;
 import java.util.List;
 import java.util.concurrent.Executors;
 
@@ -26,7 +27,7 @@ public class BootReceiver extends BroadcastReceiver {
         // DB read; finish() is always called so the system can recycle the
         // receiver.
         final BroadcastReceiver.PendingResult pendingResult = goAsync();
-        Executors.newSingleThreadExecutor().execute(() -> {
+        AppExecutors.io().execute(() -> {
             try {
                 AppDatabase db = AppDatabase.getInstance(context);
                 List<Task> tasks = db.taskDao().getActiveTasksWithDeadline();

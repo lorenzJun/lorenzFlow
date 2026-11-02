@@ -29,6 +29,7 @@ import com.lorenzflow.app.databinding.DialogAddPasswordBinding;
 import com.lorenzflow.app.databinding.FragmentPasswordManagerBinding;
 import com.lorenzflow.app.util.SecurityUtil;
 
+import com.lorenzflow.app.util.AppExecutors;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.List;
@@ -213,7 +214,7 @@ public class PasswordManagerFragment extends Fragment implements PasswordAdapter
     }
 
     private void loadPasswords() {
-        Executors.newSingleThreadExecutor().execute(() -> {
+        AppExecutors.io().execute(() -> {
             List<PasswordEntry> list = passwordDao.getAllPasswords();
             if (getActivity() == null) return;
             requireActivity().runOnUiThread(() -> {
@@ -254,7 +255,7 @@ public class PasswordManagerFragment extends Fragment implements PasswordAdapter
                         entry.setEncryptedPassword(encrypted.encryptedText);
                         entry.setIv(encrypted.iv);
 
-                        Executors.newSingleThreadExecutor().execute(() -> {
+                        AppExecutors.io().execute(() -> {
                             passwordDao.insert(entry);
                             if (getActivity() != null) {
                                 requireActivity().runOnUiThread(this::loadPasswords);
@@ -302,7 +303,7 @@ public class PasswordManagerFragment extends Fragment implements PasswordAdapter
                 .setTitle(getString(R.string.pm_delete_password_title))
                 .setMessage(getString(R.string.pm_delete_password_confirm, entry.getTitle()))
                 .setPositiveButton(getString(R.string.delete), (dialog, which) -> {
-                    Executors.newSingleThreadExecutor().execute(() -> {
+                    AppExecutors.io().execute(() -> {
                         passwordDao.delete(entry);
                         if (getActivity() != null) {
                             requireActivity().runOnUiThread(this::loadPasswords);

@@ -43,16 +43,6 @@
         <item name="android:windowLightStatusBar">false</item>
     </style>
 
-    <!-- Dialog overlay style — soft & airy -->
-    <style name="Theme.LorenzFlow.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
-        <item name="colorPrimary">@color/lf_accent</item>
-        <item name="colorSecondary">@color/lf_accent</item>
-        <item name="materialAlertDialogBodyTextStyle">@style/TextAppearance.LorenzFlow.Dialog.Body</item>
-    </style>
 
-    <style name="TextAppearance.LorenzFlow.Dialog.Body" parent="MaterialAlertDialog.MaterialComponents.Body.Text">
-        <item name="android:textSize">15sp</item>
-        <item name="android:fontFamily">sans-serif</item>
-    </style>
 
 </resources>

@@ -27,9 +27,6 @@ public interface TaskDao {
     @Query("SELECT * FROM tasks WHERE completed = 1 AND archived = 0 ORDER BY createdAt DESC")
     List<Task> getCompletedTasks();
 
-    @Query("SELECT * FROM tasks WHERE id = :id")
-    Task getTaskById(long id);
-
     @Query("SELECT * FROM tasks WHERE completed = 0 AND archived = 0 AND deadline > 0")
     List<Task> getActiveTasksWithDeadline();
 

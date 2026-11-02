@@ -1,18 +1,24 @@
 package com.lorenzflow.app;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationBarView;
-import com.lorenzflow.app.R;
 import com.lorenzflow.app.databinding.ActivityMainBinding;
 import com.lorenzflow.app.notification.NotificationHelper;
 import com.lorenzflow.app.ui.AboutFragment;
@@ -26,6 +32,11 @@ import com.lorenzflow.app.ui.TasksFragment;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (!isGranted) showNotificationsDeniedDialog();
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,11 +96,6 @@ public class MainActivity extends AppCompatActivity {
         checkNotificationPermission();
     }
 
-    private final androidx.activity.result.ActivityResultLauncher<String> requestPermissionLauncher =
-            registerForActivityResult(new androidx.activity.result.contract.ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (!isGranted) showNotificationsDeniedDialog();
-            });
-
     /**
      * Called when POST_NOTIFICATIONS was denied. Explains why reminders matter
      * and offers a shortcut to the app's system notification settings.
@@ -109,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
      * (unselected) variants. The Settings tab uses a single glyph.
      */
     private void updateNavIcons(int selectedId) {
-        android.view.Menu menu = binding.bottomNavigation.getMenu();
+        Menu menu = binding.bottomNavigation.getMenu();
         for (int i = 0; i < menu.size(); i++) {
             MenuItem item = menu.getItem(i);
             int id = item.getItemId();
@@ -135,11 +141,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkNotificationPermission() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            if (androidx.core.content.ContextCompat.checkSelfPermission(
-                    this, android.Manifest.permission.POST_NOTIFICATIONS) !=
-                    android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
             }
         }
     }

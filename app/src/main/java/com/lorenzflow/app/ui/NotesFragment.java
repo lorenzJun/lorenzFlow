@@ -20,6 +20,8 @@ import androidx.annotation.Nullable;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -31,6 +33,7 @@ import com.lorenzflow.app.data.NoteDao;
 import com.lorenzflow.app.databinding.DialogAddNoteBinding;
 import com.lorenzflow.app.databinding.FragmentNotesBinding;
 
+import com.lorenzflow.app.util.AppExecutors;
 import java.util.List;
 import java.util.concurrent.Executors;
 
@@ -62,14 +65,14 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteClickLi
         binding.recyclerNotes.setAdapter(adapter);
 
         // Attach ItemTouchHelper for manual reordering
-        androidx.recyclerview.widget.ItemTouchHelper itemTouchHelper = new androidx.recyclerview.widget.ItemTouchHelper(
-                new androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback(
-                        androidx.recyclerview.widget.ItemTouchHelper.UP | androidx.recyclerview.widget.ItemTouchHelper.DOWN |
-                        androidx.recyclerview.widget.ItemTouchHelper.LEFT | androidx.recyclerview.widget.ItemTouchHelper.RIGHT, 0) {
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
+                new ItemTouchHelper.SimpleCallback(
+                        ItemTouchHelper.UP | ItemTouchHelper.DOWN |
+                        ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, 0) {
             @Override
-            public boolean onMove(@NonNull androidx.recyclerview.widget.RecyclerView recyclerView,
-                                  @NonNull androidx.recyclerview.widget.RecyclerView.ViewHolder viewHolder,
-                                  @NonNull androidx.recyclerview.widget.RecyclerView.ViewHolder target) {
+            public boolean onMove(@NonNull RecyclerView recyclerView,
+                                  @NonNull RecyclerView.ViewHolder viewHolder,
+                                  @NonNull RecyclerView.ViewHolder target) {
                 int fromPosition = viewHolder.getAdapterPosition();
                 int toPosition = target.getAdapterPosition();
 
@@ -85,17 +88,17 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteClickLi
             }
 
             @Override
-            public void onSwiped(@NonNull androidx.recyclerview.widget.RecyclerView.ViewHolder viewHolder, int direction) {
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 // Swipe to dismiss not supported for notes
             }
 
             @Override
-            public void clearView(@NonNull androidx.recyclerview.widget.RecyclerView recyclerView,
-                                  @NonNull androidx.recyclerview.widget.RecyclerView.ViewHolder viewHolder) {
+            public void clearView(@NonNull RecyclerView recyclerView,
+                                  @NonNull RecyclerView.ViewHolder viewHolder) {
                 super.clearView(recyclerView, viewHolder);
                 // Save updated positions in background thread
                 List<Note> notes = adapter.getNotes();
-                Executors.newSingleThreadExecutor().execute(() -> {
+                AppExecutors.io().execute(() -> {
                     for (int i = 0; i < notes.size(); i++) {
                         Note note = notes.get(i);
                         note.setPosition(i);
@@ -148,7 +151,7 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteClickLi
     }
 
     private void loadNotes() {
-        Executors.newSingleThreadExecutor().execute(() -> {
+        AppExecutors.io().execute(() -> {
             List<Note> notes = noteDao.getAllNotes();
             if (getActivity() == null) return;
             requireActivity().runOnUiThread(() -> {
@@ -242,7 +245,7 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteClickLi
 
                     if (title.isEmpty() && body.isEmpty()) return;
 
-                    Executors.newSingleThreadExecutor().execute(() -> {
+                    AppExecutors.io().execute(() -> {
                         if (existingNote != null) {
                             existingNote.setTitle(title);
                             existingNote.setBody(body);
@@ -275,7 +278,7 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteClickLi
         // Add delete button if editing
         if (existingNote != null) {
             builder.setNeutralButton(R.string.delete, (dialog, which) -> {
-                Executors.newSingleThreadExecutor().execute(() -> {
+                AppExecutors.io().execute(() -> {
                     noteDao.delete(existingNote);
                     if (getActivity() != null) {
                         requireActivity().runOnUiThread(() -> {
@@ -315,7 +318,7 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteClickLi
                                 .setTitle(R.string.delete)
                                 .setMessage(getString(R.string.delete_note_confirm, noteLabel))
                                 .setPositiveButton(R.string.delete, (d, w) -> {
-                                    Executors.newSingleThreadExecutor().execute(() -> {
+                                    AppExecutors.io().execute(() -> {
                                         noteDao.delete(note);
                                         if (getActivity() != null) {
                                             requireActivity().runOnUiThread(() -> {
@@ -336,7 +339,7 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteClickLi
     @Override
     public void onNoteArchive(Note note) {
         note.setArchived(true);
-        Executors.newSingleThreadExecutor().execute(() -> {
+        AppExecutors.io().execute(() -> {
             noteDao.update(note);
             if (getActivity() == null) return;
             requireActivity().runOnUiThread(() -> {
@@ -344,7 +347,7 @@ public class NotesFragment extends Fragment implements NoteAdapter.OnNoteClickLi
                 Snackbar.make(binding.getRoot(), R.string.note_archived, Snackbar.LENGTH_LONG)
                         .setAction(R.string.undo, v -> {
                             note.setArchived(false);
-                            Executors.newSingleThreadExecutor().execute(() -> {
+                            AppExecutors.io().execute(() -> {
                                 noteDao.update(note);
                                 if (getActivity() != null) {
                                     requireActivity().runOnUiThread(NotesFragment.this::loadNotes);

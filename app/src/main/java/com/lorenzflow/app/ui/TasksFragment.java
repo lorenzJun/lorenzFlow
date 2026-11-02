@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
@@ -32,6 +33,7 @@ import com.lorenzflow.app.databinding.FragmentTasksBinding;
 import com.lorenzflow.app.util.AlarmScheduler;
 import com.lorenzflow.app.util.PdfExportUtil;
 
+import com.lorenzflow.app.util.AppExecutors;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -185,7 +187,7 @@ public class TasksFragment extends Fragment
                 Snackbar.make(binding.getRoot(), R.string.task_deleted, Snackbar.LENGTH_LONG)
                         .setAction(R.string.undo, v -> {
                             // Re-insert on undo
-                            Executors.newSingleThreadExecutor().execute(() -> {
+                            AppExecutors.io().execute(() -> {
                                 taskDao.insert(task);
                                 if (task.getDeadline() > 0 && task.getDeadline() > System.currentTimeMillis()) {
                                     AlarmScheduler.scheduleAlarm(requireContext(), task);
@@ -198,7 +200,7 @@ public class TasksFragment extends Fragment
                             public void onDismissed(Snackbar snackbar, int event) {
                                 if (event != DISMISS_EVENT_ACTION) {
                                     // Actually delete from DB if not undone
-                                    Executors.newSingleThreadExecutor().execute(() -> taskDao.delete(task));
+                                    AppExecutors.io().execute(() -> taskDao.delete(task));
                                 }
                             }
                         })
@@ -261,7 +263,7 @@ public class TasksFragment extends Fragment
     }
 
     private void loadTasks() {
-        Executors.newSingleThreadExecutor().execute(() -> {
+        AppExecutors.io().execute(() -> {
             List<Task> active = taskDao.getActiveTasks();
             List<Task> completed = taskDao.getCompletedTasks();
 
@@ -371,7 +373,7 @@ public class TasksFragment extends Fragment
     private void updateScrollability() {
         if (binding == null) return;
         binding.nestedScrollView.getViewTreeObserver().addOnGlobalLayoutListener(
-                new android.view.ViewTreeObserver.OnGlobalLayoutListener() {
+                new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
                         if (binding == null) return;
@@ -404,7 +406,7 @@ public class TasksFragment extends Fragment
     @Override
     public void onTaskCheckedChanged(Task task, boolean isChecked) {
         task.setCompleted(isChecked);
-        Executors.newSingleThreadExecutor().execute(() -> {
+        AppExecutors.io().execute(() -> {
             taskDao.update(task);
             if (isChecked) {
                 AlarmScheduler.cancelAlarm(requireContext(), task);
@@ -435,7 +437,7 @@ public class TasksFragment extends Fragment
     @Override
     public void onTaskArchive(Task task) {
         task.setArchived(true);
-        Executors.newSingleThreadExecutor().execute(() -> {
+        AppExecutors.io().execute(() -> {
             taskDao.update(task);
             AlarmScheduler.cancelAlarm(requireContext(), task);
             if (getActivity() == null) return;
@@ -444,7 +446,7 @@ public class TasksFragment extends Fragment
                 Snackbar.make(binding.getRoot(), R.string.task_archived, Snackbar.LENGTH_LONG)
                         .setAction(R.string.undo, v -> {
                             task.setArchived(false);
-                            Executors.newSingleThreadExecutor().execute(() -> {
+                            AppExecutors.io().execute(() -> {
                                 taskDao.update(task);
                                 if (task.getDeadline() > 0 && task.getDeadline() > System.currentTimeMillis() && !task.isCompleted()) {
                                     AlarmScheduler.scheduleAlarm(requireContext(), task);
@@ -464,7 +466,7 @@ public class TasksFragment extends Fragment
                 .setTitle(getString(R.string.clear_completed_title))
                 .setMessage(getString(R.string.clear_completed_message))
                 .setPositiveButton(getString(R.string.clear_all), (dialog, which) -> {
-                    Executors.newSingleThreadExecutor().execute(() -> {
+                    AppExecutors.io().execute(() -> {
                         taskDao.deleteAllCompleted();
                         if (getActivity() != null) {
                             requireActivity().runOnUiThread(this::loadTasks);
@@ -478,7 +480,7 @@ public class TasksFragment extends Fragment
     // ==================== PDF EXPORT ====================
 
     private void exportPdf() {
-        Executors.newSingleThreadExecutor().execute(() -> {
+        AppExecutors.io().execute(() -> {
             List<Task> tasks = taskDao.getActiveTasks();
 
             if (tasks.isEmpty()) {

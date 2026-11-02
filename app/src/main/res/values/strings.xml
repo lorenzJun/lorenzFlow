@@ -5,17 +5,13 @@
     <!-- Navigation -->
     <string name="nav_tasks">Tasks</string>
     <string name="nav_notes">Notes</string>
-    <string name="nav_profile">Profile</string>
-    <string name="nav_about">About</string>
     <string name="nav_settings">Settings</string>
 
     <!-- Tasks -->
     <string name="add_task">Add Task</string>
     <string name="task_title">Title</string>
     <string name="task_description">Description</string>
-    <string name="task_deadline">Deadline</string>
     <string name="set_deadline">Set Deadline</string>
-    <string name="no_deadline">No deadline set</string>
     <string name="completed_tasks">Completed (%1$d)</string>
     <string name="no_tasks_yet">No tasks yet.\nTap + to add one!</string>
     <string name="task_deleted">Task deleted</string>
@@ -47,27 +43,20 @@
     <string name="change_photo">Change Photo</string>
     <string name="save_profile">Save Profile</string>
     <string name="profile_saved">Profile saved!</string>
-    <string name="enter_your_name">Enter your name</string>
-    <string name="tell_about_yourself">Tell something about yourself…</string>
 
     <!-- Theme -->
-    <string name="toggle_theme">Toggle Theme</string>
 
     <!-- Tasks screen header & quick actions -->
     <string name="tasks_greeting">Good Day</string>
     <string name="tasks_greeting_subtitle">Here\'s what\'s on your plate today</string>
     <string name="my_tasks_section">My Tasks</string>
     <string name="search_tasks_hint">Search tasks…</string>
-    <string name="cd_search_tasks">Search tasks</string>
     <string name="quick_label_create">CREATE</string>
     <string name="quick_label_capture">CAPTURE</string>
     <string name="quick_label_focus">FOCUS</string>
     <string name="quick_title_add_task">Add Task</string>
     <string name="quick_title_new_note">New Note</string>
     <string name="quick_title_start_focus">Start Focus</string>
-    <string name="cd_quick_add_task">Add a new task</string>
-    <string name="cd_quick_new_note">Create a new note</string>
-    <string name="cd_quick_start_focus">Start a focus session</string>
 
     <!-- PDF -->
     <string name="pdf_exported">Tasks exported to Documents folder</string>
@@ -94,7 +83,6 @@
     <string name="about_description">Lorenz Flow is your personal productivity companion. Manage tasks, capture notes, and stay on top of your deadlines — all in one clean, elegant app.\n\nBuilt with ❤ using Material Design 3.</string>
 
     <!-- Settings -->
-    <string name="settings_title">Settings</string>
     <string name="settings_theme_title">Theme Mode</string>
     <string name="settings_theme_desc">Choose your preferred app appearance</string>
     <string name="settings_theme_system">Follow System</string>
@@ -123,7 +111,6 @@
     <!-- Content descriptions -->
     <string name="cd_profile_picture">Profile picture</string>
     <string name="cd_add_button">Add new item</string>
-    <string name="cd_theme_toggle">Toggle dark/light mode</string>
     <string name="cd_expand_completed">Toggle completed tasks visibility</string>
     <!-- Fragments: dialogs & actions (moved from hardcoded Java literals) -->
     <string name="edit_task">Edit Task</string>

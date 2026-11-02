@@ -23,9 +23,6 @@ public interface NoteDao {
     @Query("SELECT * FROM notes WHERE archived = 0 ORDER BY position ASC, timestamp DESC")
     List<Note> getAllNotes();
 
-    @Query("SELECT * FROM notes WHERE id = :id")
-    Note getNoteById(long id);
-
     @Query("SELECT * FROM notes WHERE archived = 1 ORDER BY timestamp DESC")
     List<Note> getArchivedNotes();
 }

@@ -20,6 +20,7 @@ import com.lorenzflow.app.databinding.FragmentArchiveTasksBinding;
 import com.lorenzflow.app.databinding.ItemArchivedTaskBinding;
 import com.lorenzflow.app.util.AlarmScheduler;
 
+import com.lorenzflow.app.util.AppExecutors;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -61,7 +62,7 @@ public class ArchiveTasksFragment extends Fragment {
     }
 
     private void loadArchivedTasks() {
-        Executors.newSingleThreadExecutor().execute(() -> {
+        AppExecutors.io().execute(() -> {
             List<Task> archived = taskDao.getArchivedTasks();
             if (getActivity() == null) return;
             requireActivity().runOnUiThread(() -> {
@@ -76,7 +77,7 @@ public class ArchiveTasksFragment extends Fragment {
 
     private void restoreTask(Task task) {
         task.setArchived(false);
-        Executors.newSingleThreadExecutor().execute(() -> {
+        AppExecutors.io().execute(() -> {
             taskDao.update(task);
 
             // Re-schedule the deadline alarm, mirroring TasksFragment's
@@ -96,7 +97,7 @@ public class ArchiveTasksFragment extends Fragment {
                 .setTitle(R.string.delete)
                 .setMessage(getString(R.string.permanently_delete_confirm, task.getTitle()))
                 .setPositiveButton(R.string.delete, (dialog, which) ->
-                        Executors.newSingleThreadExecutor().execute(() -> {
+                        AppExecutors.io().execute(() -> {
                             taskDao.delete(task);
                             if (getActivity() != null) {
                                 requireActivity().runOnUiThread(this::loadArchivedTasks);
@@ -111,7 +112,7 @@ public class ArchiveTasksFragment extends Fragment {
                 .setTitle(R.string.clear_archive)
                 .setMessage(getString(R.string.delete_all_archived_tasks_confirm))
                 .setPositiveButton(R.string.clear_archive, (dialog, which) ->
-                        Executors.newSingleThreadExecutor().execute(() -> {
+                        AppExecutors.io().execute(() -> {
                             taskDao.deleteAllArchived();
                             if (getActivity() != null) {
                                 requireActivity().runOnUiThread(this::loadArchivedTasks);

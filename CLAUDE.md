@@ -40,13 +40,14 @@ Settings/About. Fully offline — no networking, no Firebase, no remote API.
   confirmation and share sheet used by both Tasks and Calendar.
 - `util/` — `SecurityUtil` (KeyStore crypto; encrypt returns ciphertext + base64 IV per entry),
   `PdfExportUtil` (PdfDocument → MediaStore/Documents dir), `AnimUtil` (list fade-in polish),
-  `AlarmScheduler` (the one scheduling implementation), `PomodoroTimer` (process-scoped session)
+  `AlarmScheduler` (the one scheduling implementation), `PomodoroTimer` (process-scoped session),
+  `AppExecutors` (the single shared DB/crypto thread)
 - `res/` — layouts, menus, drawables, `values/` + `values-night/` (dark mode uses parallel
   colors.xml/themes.xml)
 
 ## Conventions
 
-- **All DB/heavy work off the main thread:** `Executors.newSingleThreadExecutor().execute(() -> { ... dao ... })`,
+- **All DB/heavy work off the main thread:** `AppExecutors.io().execute(() -> { ... dao ... })`,
   then `getActivity() != null` check → `requireActivity().runOnUiThread(...)` and manually re-query
   (`loadTasks()`, `loadNotes()`, `loadAllTasks()`). No LiveData/ViewModel layer.
 - **Strings go in `strings.xml`** — no hardcoded UI literals in layouts or Java. Category names

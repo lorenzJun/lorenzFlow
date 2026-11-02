@@ -16,6 +16,7 @@ import com.lorenzflow.app.data.TaskDao;
 import com.lorenzflow.app.databinding.DialogAddTaskBinding;
 import com.lorenzflow.app.util.AlarmScheduler;
 
+import com.lorenzflow.app.util.AppExecutors;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,8 +36,13 @@ public final class TaskDialogHelper {
         void onTasksChanged();
     }
 
-    private static final SimpleDateFormat DEADLINE_FORMAT =
-            new SimpleDateFormat("MMM dd, yyyy · hh:mm a", Locale.getDefault());
+    private static final String DEADLINE_PATTERN = "MMM dd, yyyy · hh:mm a";
+
+    /** Fresh formatter per call — SimpleDateFormat is not thread-safe. */
+    private static String formatDeadline(long millis) {
+        return new SimpleDateFormat(DEADLINE_PATTERN, Locale.getDefault())
+                .format(new Date(millis));
+    }
 
     private TaskDialogHelper() {
     }
@@ -58,7 +64,7 @@ public final class TaskDialogHelper {
             dialogBinding.editTaskTitle.setText(existingTask.getTitle());
             dialogBinding.editTaskDescription.setText(existingTask.getDescription());
             if (existingTask.getDeadline() > 0) {
-                dialogBinding.btnSetDeadline.setText(DEADLINE_FORMAT.format(new Date(existingTask.getDeadline())));
+                dialogBinding.btnSetDeadline.setText(formatDeadline(existingTask.getDeadline()));
             }
             preselectCategory(dialogBinding, existingTask.getCategory());
         }
@@ -84,7 +90,7 @@ public final class TaskDialogHelper {
                     task.setDeadline(selectedDeadline[0]);
                     task.setCategory(category);
 
-                    Executors.newSingleThreadExecutor().execute(() -> {
+                    AppExecutors.io().execute(() -> {
                         if (existingTask != null) {
                             taskDao.update(task);
                         } else {
@@ -126,7 +132,7 @@ public final class TaskDialogHelper {
                 .setTitle(R.string.delete)
                 .setMessage(fragment.getString(R.string.delete_task_confirm, task.getTitle()))
                 .setPositiveButton(R.string.delete, (dialog, which) ->
-                        Executors.newSingleThreadExecutor().execute(() -> {
+                        AppExecutors.io().execute(() -> {
                             taskDao.delete(task);
                             AlarmScheduler.cancelAlarm(appContext, task);
                             if (fragment.getActivity() == null) return;
@@ -150,7 +156,7 @@ public final class TaskDialogHelper {
         if (task.getDeadline() > 0) {
             content.append("\n\n").append(
                     fragment.getString(R.string.share_deadline,
-                            DEADLINE_FORMAT.format(new Date(task.getDeadline()))));
+                            formatDeadline(task.getDeadline())));
         }
 
         Intent sendIntent = new Intent();
@@ -178,7 +184,7 @@ public final class TaskDialogHelper {
                 deadlineCal.set(Calendar.MINUTE, minute);
                 deadlineCal.set(Calendar.SECOND, 0);
                 selectedDeadline[0] = deadlineCal.getTimeInMillis();
-                dialogBinding.btnSetDeadline.setText(DEADLINE_FORMAT.format(new Date(selectedDeadline[0])));
+                dialogBinding.btnSetDeadline.setText(formatDeadline(selectedDeadline[0]));
             }, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), false).show();
         }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show();
     }

@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -262,11 +261,7 @@ public class PomodoroFragment extends Fragment implements PomodoroTimer.Listener
         // 2. Vibrate
         if (vibrator != null && vibrator.hasVibrator()) {
             long[] pattern = {0, 500, 500, 500, 500};
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator.vibrate(VibrationEffect.createWaveform(pattern, 0));
-            } else {
-                vibrator.vibrate(pattern, 0);
-            }
+            vibrator.vibrate(VibrationEffect.createWaveform(pattern, 0));
         }
 
         // 3. Show notification
@@ -303,16 +298,14 @@ public class PomodoroFragment extends Fragment implements PomodoroTimer.Listener
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (manager == null) return;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID,
-                    getString(R.string.pomodoro_notification_title),
-                    NotificationManager.IMPORTANCE_HIGH
-            );
-            channel.enableVibration(true);
-            channel.enableLights(true);
-            manager.createNotificationChannel(channel);
-        }
+        NotificationChannel channel = new NotificationChannel(
+                CHANNEL_ID,
+                getString(R.string.pomodoro_notification_title),
+                NotificationManager.IMPORTANCE_HIGH
+        );
+        channel.enableVibration(true);
+        channel.enableLights(true);
+        manager.createNotificationChannel(channel);
 
         Intent intent = new Intent(context, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

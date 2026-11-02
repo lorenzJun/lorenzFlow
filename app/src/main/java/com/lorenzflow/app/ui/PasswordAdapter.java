@@ -22,6 +22,7 @@ import com.lorenzflow.app.util.SecurityUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -75,10 +76,10 @@ public class PasswordAdapter extends RecyclerView.Adapter<PasswordAdapter.Passwo
         if (query.isEmpty()) {
             displayedPasswords.addAll(allPasswords);
         } else {
-            String lowerQuery = query.toLowerCase().trim();
+            String lowerQuery = query.toLowerCase(Locale.ROOT).trim();
             for (PasswordEntry entry : allPasswords) {
-                if (entry.getTitle().toLowerCase().contains(lowerQuery) ||
-                        entry.getUsername().toLowerCase().contains(lowerQuery)) {
+                if (entry.getTitle().toLowerCase(Locale.ROOT).contains(lowerQuery) ||
+                        entry.getUsername().toLowerCase(Locale.ROOT).contains(lowerQuery)) {
                     displayedPasswords.add(entry);
                 }
             }

@@ -19,6 +19,7 @@ import com.lorenzflow.app.data.TaskDao;
 import com.lorenzflow.app.databinding.FragmentCalendarBinding;
 import com.lorenzflow.app.util.AlarmScheduler;
 
+import com.lorenzflow.app.util.AppExecutors;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -88,7 +89,7 @@ public class CalendarFragment extends Fragment
     }
 
     private void loadAllTasks() {
-        Executors.newSingleThreadExecutor().execute(() -> {
+        AppExecutors.io().execute(() -> {
             List<Task> tasks = taskDao.getActiveTasksWithDeadline();
             allTasksWithDeadline = tasks != null ? tasks : new ArrayList<>();
 
@@ -134,7 +135,7 @@ public class CalendarFragment extends Fragment
     public void onTaskCheckedChanged(Task task, boolean isChecked) {
         task.setCompleted(isChecked);
         Context appContext = requireContext().getApplicationContext();
-        Executors.newSingleThreadExecutor().execute(() -> {
+        AppExecutors.io().execute(() -> {
             taskDao.update(task);
             if (isChecked) {
                 AlarmScheduler.cancelAlarm(appContext, task);
@@ -166,7 +167,7 @@ public class CalendarFragment extends Fragment
     public void onTaskArchive(Task task) {
         task.setArchived(true);
         Context appContext = requireContext().getApplicationContext();
-        Executors.newSingleThreadExecutor().execute(() -> {
+        AppExecutors.io().execute(() -> {
             taskDao.update(task);
             AlarmScheduler.cancelAlarm(appContext, task);
             if (getActivity() == null) return;
@@ -177,7 +178,7 @@ public class CalendarFragment extends Fragment
                                 com.google.android.material.snackbar.Snackbar.LENGTH_LONG)
                         .setAction(R.string.undo, v -> {
                             task.setArchived(false);
-                            Executors.newSingleThreadExecutor().execute(() -> {
+                            AppExecutors.io().execute(() -> {
                                 taskDao.update(task);
                                 if (!task.isCompleted()
                                         && task.getDeadline() > System.currentTimeMillis()) {

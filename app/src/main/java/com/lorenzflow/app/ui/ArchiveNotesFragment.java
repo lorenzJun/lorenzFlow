@@ -21,6 +21,7 @@ import com.lorenzflow.app.data.NoteDao;
 import com.lorenzflow.app.databinding.FragmentArchiveNotesBinding;
 import com.lorenzflow.app.databinding.ItemNoteBinding;
 
+import com.lorenzflow.app.util.AppExecutors;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -60,7 +61,7 @@ public class ArchiveNotesFragment extends Fragment {
     }
 
     private void loadArchivedNotes() {
-        Executors.newSingleThreadExecutor().execute(() -> {
+        AppExecutors.io().execute(() -> {
             List<Note> archived = noteDao.getArchivedNotes();
             if (getActivity() == null) return;
             requireActivity().runOnUiThread(() -> {
@@ -91,7 +92,7 @@ public class ArchiveNotesFragment extends Fragment {
 
     private void restoreNote(Note note) {
         note.setArchived(false);
-        Executors.newSingleThreadExecutor().execute(() -> {
+        AppExecutors.io().execute(() -> {
             noteDao.update(note);
             if (getActivity() != null) {
                 requireActivity().runOnUiThread(() -> {
@@ -107,7 +108,7 @@ public class ArchiveNotesFragment extends Fragment {
                 .setTitle(R.string.delete)
                 .setMessage(getString(R.string.permanently_delete_confirm, label))
                 .setPositiveButton(R.string.delete, (d, w) ->
-                        Executors.newSingleThreadExecutor().execute(() -> {
+                        AppExecutors.io().execute(() -> {
                             noteDao.delete(note);
                             if (getActivity() != null) {
                                 requireActivity().runOnUiThread(() -> {

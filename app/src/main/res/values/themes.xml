@@ -44,38 +44,10 @@
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
-    <!-- Dialog overlay style — iOS-inspired -->
-    <style name="Theme.LorenzFlow.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
-        <item name="colorPrimary">@color/lf_accent</item>
-        <item name="colorSecondary">@color/lf_accent</item>
-        <item name="materialAlertDialogBodyTextStyle">@style/TextAppearance.LorenzFlow.Dialog.Body</item>
-    </style>
 
-    <style name="TextAppearance.LorenzFlow.Dialog.Body" parent="MaterialAlertDialog.MaterialComponents.Body.Text">
-        <item name="android:textSize">15sp</item>
-        <item name="android:fontFamily">sans-serif</item>
-    </style>
 
-    <!-- Soft & airy card — 24dp corners, no shadow, no stroke -->
-    <style name="Widget.LorenzFlow.CardView" parent="Widget.Material3.CardView.Elevated">
-        <item name="cardCornerRadius">@dimen/lf_corner_card</item>
-        <item name="cardElevation">0dp</item>
-        <item name="strokeWidth">0dp</item>
-    </style>
 
-    <!-- iOS-style bottom navigation -->
-    <style name="Widget.LorenzFlow.BottomNav" parent="Widget.Material3.BottomNavigationView">
-        <item name="backgroundTint">@color/lf_surface</item>
-        <item name="itemActiveIndicatorStyle">@null</item>
-        <item name="itemTextColor">@color/lf_text_secondary</item>
-        <item name="itemIconTint">@color/lf_text_secondary</item>
-        <item name="labelVisibilityMode">labeled</item>
-    </style>
 
-    <!-- iOS-style toolbar (large title feel) -->
-    <style name="Widget.LorenzFlow.Toolbar" parent="Widget.Material3.Toolbar">
-        <item name="titleTextAppearance">@style/TextAppearance.LorenzFlow.Toolbar.Title</item>
-    </style>
 
     <style name="TextAppearance.LorenzFlow.Toolbar.Title" parent="TextAppearance.Material3.TitleLarge">
         <item name="android:textSize">17sp</item>
