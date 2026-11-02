@@ -129,6 +129,8 @@
     <string name="edit_task">Edit Task</string>
     <string name="edit_note">Edit Note</string>
     <string name="transfer_task_to">Transfer Task to...</string>
+    <string name="share_deadline">Deadline: %1$s</string>
+    <string name="ok">OK</string>
     <string name="delete_task_confirm">Delete task \"%1$s\"?</string>
     <string name="delete_note_confirm">Delete \"%1$s\"?</string>
     <string name="permanently_delete_confirm">Permanently delete \"%1$s\"?</string>

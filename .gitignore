@@ -22,6 +22,10 @@ local.properties
 .DS_Store
 Thumbs.db
 
+# Client/agent scratch files
+.cloud-attachments/
+project_dump.txt
+
 # User-specific configuration
 .navigation/
 captures/

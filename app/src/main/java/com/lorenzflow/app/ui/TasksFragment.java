@@ -1,9 +1,6 @@
 package com.lorenzflow.app.ui;
 
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -31,21 +28,17 @@ import com.lorenzflow.app.R;
 import com.lorenzflow.app.data.AppDatabase;
 import com.lorenzflow.app.data.Task;
 import com.lorenzflow.app.data.TaskDao;
-import com.lorenzflow.app.databinding.DialogAddTaskBinding;
 import com.lorenzflow.app.databinding.FragmentTasksBinding;
-import com.lorenzflow.app.ui.NotesFragment;
-import com.lorenzflow.app.ui.PomodoroFragment;
 import com.lorenzflow.app.util.AlarmScheduler;
 import com.lorenzflow.app.util.PdfExportUtil;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executors;
 
-public class TasksFragment extends Fragment implements TaskAdapter.OnTaskActionListener {
+public class TasksFragment extends Fragment
+        implements TaskAdapter.OnTaskActionListener, TaskDialogHelper.Host {
 
     private FragmentTasksBinding binding;
     private TaskAdapter activeAdapter;
@@ -55,9 +48,6 @@ public class TasksFragment extends Fragment implements TaskAdapter.OnTaskActionL
     private android.content.SharedPreferences prefs;
     private String selectedFilterCategory = "All";
     private String searchQuery = "";
-
-    private final SimpleDateFormat sdf =
-            new SimpleDateFormat("MMM dd, yyyy · hh:mm a", Locale.getDefault());
 
     @Nullable
     @Override
@@ -397,151 +387,16 @@ public class TasksFragment extends Fragment implements TaskAdapter.OnTaskActionL
                 });
     }
 
-    // ==================== ADD TASK DIALOG ====================
+    // ==================== ADD / EDIT TASK DIALOG ====================
 
+    /** Add/edit dialog, delete confirmation and share all live in TaskDialogHelper. */
     private void showTaskDialog(@Nullable Task existingTask) {
-        DialogAddTaskBinding dialogBinding = DialogAddTaskBinding.inflate(getLayoutInflater());
-
-        final long[] selectedDeadline = {existingTask != null ? existingTask.getDeadline() : 0};
-
-        if (existingTask != null) {
-            dialogBinding.editTaskTitle.setText(existingTask.getTitle());
-            dialogBinding.editTaskDescription.setText(existingTask.getDescription());
-            if (existingTask.getDeadline() > 0) {
-                dialogBinding.btnSetDeadline.setText(sdf.format(new Date(existingTask.getDeadline())));
-            }
-
-            // Pre-select category
-            String category = existingTask.getCategory();
-            if (category != null) {
-                switch (category) {
-                    case "Work":
-                        dialogBinding.chipWork.setChecked(true);
-                        break;
-                    case "Personal":
-                        dialogBinding.chipPersonal.setChecked(true);
-                        break;
-                    case "School":
-                        dialogBinding.chipSchool.setChecked(true);
-                        break;
-                    case "Wellness":
-                        dialogBinding.chipWellness.setChecked(true);
-                        break;
-                    case "Urgent":
-                        dialogBinding.chipUrgent.setChecked(true);
-                        break;
-                    case "General":
-                    default:
-                        dialogBinding.chipGeneral.setChecked(true);
-                        break;
-                }
-            }
-        }
-
-        // Deadline picker button
-        dialogBinding.btnSetDeadline.setOnClickListener(v -> {
-            Calendar cal = Calendar.getInstance();
-            if (selectedDeadline[0] > 0) {
-                cal.setTimeInMillis(selectedDeadline[0]);
-            }
-            new DatePickerDialog(requireContext(), (view, year, month, day) -> {
-                Calendar deadlineCal = Calendar.getInstance();
-                deadlineCal.set(year, month, day);
-
-                // Also pick time
-                new TimePickerDialog(requireContext(), (timeView, hour, minute) -> {
-                    deadlineCal.set(Calendar.HOUR_OF_DAY, hour);
-                    deadlineCal.set(Calendar.MINUTE, minute);
-                    deadlineCal.set(Calendar.SECOND, 0);
-                    selectedDeadline[0] = deadlineCal.getTimeInMillis();
-                    dialogBinding.btnSetDeadline.setText(sdf.format(new Date(selectedDeadline[0])));
-                }, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), false).show();
-            }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show();
-        });
-
-        String titleStr = existingTask != null ? getString(R.string.edit_task) : getString(R.string.add_task);
-
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(titleStr)
-                .setView(dialogBinding.getRoot())
-                .setPositiveButton(R.string.save, (dialog, which) -> {
-                    String title = dialogBinding.editTaskTitle.getText() != null
-                            ? dialogBinding.editTaskTitle.getText().toString().trim() : "";
-                    String desc = dialogBinding.editTaskDescription.getText() != null
-                            ? dialogBinding.editTaskDescription.getText().toString().trim() : "";
-
-                    if (title.isEmpty()) return;
-
-                    // Get selected category
-                    String category = "General";
-                    int checkedChipId = dialogBinding.chipGroupCategory.getCheckedChipId();
-                    if (checkedChipId == R.id.chip_work) {
-                        category = "Work";
-                    } else if (checkedChipId == R.id.chip_personal) {
-                        category = "Personal";
-                    } else if (checkedChipId == R.id.chip_school) {
-                        category = "School";
-                    } else if (checkedChipId == R.id.chip_wellness) {
-                        category = "Wellness";
-                    } else if (checkedChipId == R.id.chip_urgent) {
-                        category = "Urgent";
-                    }
-
-                    Task task = existingTask != null ? existingTask : new Task();
-                    task.setTitle(title);
-                    task.setDescription(desc);
-                    task.setDeadline(selectedDeadline[0]);
-                    task.setCategory(category);
-
-                    Executors.newSingleThreadExecutor().execute(() -> {
-                        if (existingTask != null) {
-                            taskDao.update(task);
-                            AlarmScheduler.cancelAlarm(requireContext(), task);
-                            if (task.getDeadline() > System.currentTimeMillis() && !task.isCompleted()) {
-                                AlarmScheduler.scheduleAlarm(requireContext(), task);
-                            }
-                        } else {
-                            long id = taskDao.insert(task);
-                            task.setId(id);
-                            if (task.getDeadline() > System.currentTimeMillis()) {
-                                AlarmScheduler.scheduleAlarm(requireContext(), task);
-                            }
-                        }
-
-                        if (getActivity() != null) {
-                            requireActivity().runOnUiThread(this::loadTasks);
-                        }
-                    });
-                })
-                .setNegativeButton(R.string.cancel, null);
-
-        if (existingTask != null) {
-            builder.setNeutralButton(R.string.delete, (dialog, which) -> {
-                deleteTaskConfirm(existingTask);
-            });
-        }
-
-        builder.show();
+        TaskDialogHelper.showTaskDialog(this, existingTask, taskDao, this);
     }
 
-    private void deleteTaskConfirm(Task task) {
-        new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.delete)
-                .setMessage(getString(R.string.delete_task_confirm, task.getTitle()))
-                .setPositiveButton(R.string.delete, (dialog, which) -> {
-                    Executors.newSingleThreadExecutor().execute(() -> {
-                        taskDao.delete(task);
-                        AlarmScheduler.cancelAlarm(requireContext(), task);
-                        if (getActivity() != null) {
-                            requireActivity().runOnUiThread(() -> {
-                                Toast.makeText(requireContext(), R.string.task_deleted, Toast.LENGTH_SHORT).show();
-                                loadTasks();
-                            });
-                        }
-                    });
-                })
-                .setNegativeButton(R.string.cancel, null)
-                .show();
+    @Override
+    public void onTasksChanged() {
+        loadTasks();
     }
 
     // ==================== TASK CALLBACKS ====================
@@ -569,26 +424,12 @@ public class TasksFragment extends Fragment implements TaskAdapter.OnTaskActionL
 
     @Override
     public void onTaskDelete(Task task) {
-        deleteTaskConfirm(task);
+        TaskDialogHelper.deleteTaskConfirm(this, task, taskDao, this);
     }
 
     @Override
     public void onTaskShare(Task task) {
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        
-        String shareContent = task.getTitle();
-        if (task.getDescription() != null && !task.getDescription().isEmpty()) {
-            shareContent += "\n\n" + task.getDescription();
-        }
-        if (task.getDeadline() > 0) {
-            shareContent += "\n\nDeadline: " + sdf.format(new Date(task.getDeadline()));
-        }
-        
-        sendIntent.putExtra(Intent.EXTRA_TEXT, shareContent);
-        sendIntent.setType("text/plain");
-        Intent shareIntent = Intent.createChooser(sendIntent, getString(R.string.transfer_task_to));
-        startActivity(shareIntent);
+        TaskDialogHelper.shareTask(this, task);
     }
 
     @Override

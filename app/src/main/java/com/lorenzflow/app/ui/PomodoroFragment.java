@@ -5,12 +5,12 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.view.LayoutInflater;
@@ -24,31 +24,35 @@ import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
 import com.lorenzflow.app.MainActivity;
 import com.lorenzflow.app.R;
 import com.lorenzflow.app.databinding.FragmentPomodoroBinding;
+import com.lorenzflow.app.util.PomodoroTimer;
 
 import java.util.Locale;
 
-public class PomodoroFragment extends Fragment {
+/**
+ * Pomodoro screen. All countdown state lives in {@link PomodoroTimer}, so the
+ * session keeps running when this fragment is replaced on a tab switch; the
+ * fragment only renders state and re-attaches its listener in onViewCreated().
+ */
+public class PomodoroFragment extends Fragment implements PomodoroTimer.Listener {
+
+    private static final String PREFS_NAME = "lorenz_flow_prefs";
+    private static final String KEY_FOCUS = "pomodoro_focus_mins";
+    private static final String KEY_SHORT = "pomodoro_short_mins";
+    private static final String KEY_LONG = "pomodoro_long_mins";
+    private static final String CHANNEL_ID = "Pomodoro_Timer";
 
     private FragmentPomodoroBinding binding;
+    private PomodoroTimer timer;
 
-    private long focusTimeMillis;
-    private long shortBreakTimeMillis;
-    private long longBreakTimeMillis;
-
-    private long totalTimeMillis;
-    private long timeLeftMillis;
-
-    private CountDownTimer countDownTimer;
-    private boolean isTimerRunning = false;
-    private String currentMode = "Focus"; // "Focus", "Short", "Long"
+    /** Guards the checked-state restore so it doesn't look like a user tap. */
+    private boolean suppressModeCallback;
 
     private Ringtone activeRingtone;
     private Vibrator vibrator;
-
-    private static final String CHANNEL_ID = "Pomodoro_Timer";
 
     @Nullable
     @Override
@@ -64,89 +68,86 @@ public class PomodoroFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         vibrator = (Vibrator) requireContext().getSystemService(Context.VIBRATOR_SERVICE);
+        timer = PomodoroTimer.get();
 
         loadDurations();
-        timeLeftMillis = totalTimeMillis;
-
         setupModeSelection();
         setupControls();
-        updateTimerText();
-        updateProgressBar();
+        syncModeButtons();
+
+        timer.setListener(this);
+        render();
     }
 
+    /** Pushes the durations saved in SharedPreferences into the session. */
     private void loadDurations() {
         if (getContext() == null) return;
-        android.content.SharedPreferences prefs = requireContext().getSharedPreferences("lorenz_flow_prefs", Context.MODE_PRIVATE);
-        focusTimeMillis = prefs.getInt("pomodoro_focus_mins", 25) * 60 * 1000L;
-        shortBreakTimeMillis = prefs.getInt("pomodoro_short_mins", 5) * 60 * 1000L;
-        longBreakTimeMillis = prefs.getInt("pomodoro_long_mins", 15) * 60 * 1000L;
-
-        if (currentMode.equals("Focus")) {
-            totalTimeMillis = focusTimeMillis;
-        } else if (currentMode.equals("Short")) {
-            totalTimeMillis = shortBreakTimeMillis;
-        } else {
-            totalTimeMillis = longBreakTimeMillis;
-        }
+        SharedPreferences prefs = requireContext()
+                .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        timer.setDurations(
+                prefs.getInt(KEY_FOCUS, 25) * 60 * 1000L,
+                prefs.getInt(KEY_SHORT, 5) * 60 * 1000L,
+                prefs.getInt(KEY_LONG, 15) * 60 * 1000L);
     }
 
     private void setupModeSelection() {
         binding.toggleGroupModes.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
-            if (!isChecked) return;
-
-            // Stop existing timer
-            if (isTimerRunning) {
-                pauseTimer();
-            }
+            if (!isChecked || suppressModeCallback) return;
 
             if (checkedId == R.id.btn_mode_focus) {
-                currentMode = "Focus";
-                totalTimeMillis = focusTimeMillis;
-                binding.textStatus.setText(getString(R.string.pomodoro_status_focus));
-                binding.pomodoroProgress.setIndicatorColor(requireContext().getColor(R.color.lf_accent));
+                timer.setMode(PomodoroTimer.MODE_FOCUS);
             } else if (checkedId == R.id.btn_mode_short) {
-                currentMode = "Short";
-                totalTimeMillis = shortBreakTimeMillis;
-                binding.textStatus.setText(getString(R.string.pomodoro_status_short));
-                binding.pomodoroProgress.setIndicatorColor(requireContext().getColor(R.color.lf_pastel_mint_deep));
+                timer.setMode(PomodoroTimer.MODE_SHORT);
             } else if (checkedId == R.id.btn_mode_long) {
-                currentMode = "Long";
-                totalTimeMillis = longBreakTimeMillis;
-                binding.textStatus.setText(getString(R.string.pomodoro_status_long));
-                binding.pomodoroProgress.setIndicatorColor(requireContext().getColor(R.color.lf_pastel_lilac_deep));
+                timer.setMode(PomodoroTimer.MODE_LONG);
             }
-
-            timeLeftMillis = totalTimeMillis;
-            updateTimerText();
-            updateProgressBar();
-            binding.btnStartPause.setText(getString(R.string.start));
+            render();
         });
     }
 
     private void setupControls() {
         binding.btnStartPause.setOnClickListener(v -> {
-            if (isTimerRunning) {
-                pauseTimer();
+            if (timer.isRunning()) {
+                timer.pause();
             } else {
-                startTimer();
+                timer.start();
             }
+            render();
         });
 
-        binding.btnReset.setOnClickListener(v -> resetTimer());
+        binding.btnReset.setOnClickListener(v -> {
+            timer.reset();
+            render();
+        });
 
         binding.btnChangeDurations.setOnClickListener(v -> showEditDurationsDialog());
     }
 
-    private void showEditDurationsDialog() {
-        android.content.SharedPreferences prefs = requireContext().getSharedPreferences("lorenz_flow_prefs", Context.MODE_PRIVATE);
-        int currentFocus = prefs.getInt("pomodoro_focus_mins", 25);
-        int currentShort = prefs.getInt("pomodoro_short_mins", 5);
-        int currentLong = prefs.getInt("pomodoro_long_mins", 15);
+    /** Mirrors the session's mode into the segmented control. */
+    private void syncModeButtons() {
+        suppressModeCallback = true;
+        String mode = timer.getMode();
+        if (PomodoroTimer.MODE_SHORT.equals(mode)) {
+            binding.toggleGroupModes.check(R.id.btn_mode_short);
+        } else if (PomodoroTimer.MODE_LONG.equals(mode)) {
+            binding.toggleGroupModes.check(R.id.btn_mode_long);
+        } else {
+            binding.toggleGroupModes.check(R.id.btn_mode_focus);
+        }
+        suppressModeCallback = false;
+    }
 
-        android.view.View dialogView = getLayoutInflater().inflate(R.layout.dialog_edit_durations, null);
-        com.google.android.material.textfield.TextInputEditText editFocus = dialogView.findViewById(R.id.edit_focus_mins);
-        com.google.android.material.textfield.TextInputEditText editShort = dialogView.findViewById(R.id.edit_short_mins);
-        com.google.android.material.textfield.TextInputEditText editLong = dialogView.findViewById(R.id.edit_long_mins);
+    private void showEditDurationsDialog() {
+        SharedPreferences prefs = requireContext()
+                .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        int currentFocus = prefs.getInt(KEY_FOCUS, 25);
+        int currentShort = prefs.getInt(KEY_SHORT, 5);
+        int currentLong = prefs.getInt(KEY_LONG, 15);
+
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_edit_durations, null);
+        TextInputEditText editFocus = dialogView.findViewById(R.id.edit_focus_mins);
+        TextInputEditText editShort = dialogView.findViewById(R.id.edit_short_mins);
+        TextInputEditText editLong = dialogView.findViewById(R.id.edit_long_mins);
 
         editFocus.setText(String.valueOf(currentFocus));
         editShort.setText(String.valueOf(currentShort));
@@ -155,10 +156,10 @@ public class PomodoroFragment extends Fragment {
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(getString(R.string.adjust_durations))
                 .setView(dialogView)
-                .setPositiveButton("Save", (dialog, which) -> {
-                    String focusStr = editFocus.getText() != null ? editFocus.getText().toString().trim() : "";
-                    String shortStr = editShort.getText() != null ? editShort.getText().toString().trim() : "";
-                    String longStr = editLong.getText() != null ? editLong.getText().toString().trim() : "";
+                .setPositiveButton(R.string.save, (dialog, which) -> {
+                    String focusStr = textOf(editFocus);
+                    String shortStr = textOf(editShort);
+                    String longStr = textOf(editLong);
 
                     if (focusStr.isEmpty() || shortStr.isEmpty() || longStr.isEmpty()) {
                         Toast.makeText(requireContext(), R.string.durations_empty, Toast.LENGTH_SHORT).show();
@@ -176,74 +177,69 @@ public class PomodoroFragment extends Fragment {
                         }
 
                         prefs.edit()
-                                .putInt("pomodoro_focus_mins", newFocus)
-                                .putInt("pomodoro_short_mins", newShort)
-                                .putInt("pomodoro_long_mins", newLong)
+                                .putInt(KEY_FOCUS, newFocus)
+                                .putInt(KEY_SHORT, newShort)
+                                .putInt(KEY_LONG, newLong)
                                 .apply();
 
-                        // Pause and reload
-                        pauseTimer();
+                        timer.pause();
                         loadDurations();
-                        resetTimer();
+                        timer.setMode(timer.getMode());
+                        syncModeButtons();
+                        render();
                         Toast.makeText(requireContext(), R.string.durations_updated, Toast.LENGTH_SHORT).show();
 
                     } catch (NumberFormatException e) {
                         Toast.makeText(requireContext(), R.string.invalid_number_format, Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
-    private void startTimer() {
-        countDownTimer = new CountDownTimer(timeLeftMillis, 100) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                timeLeftMillis = millisUntilFinished;
-                updateTimerText();
-                updateProgressBar();
-            }
-
-            @Override
-            public void onFinish() {
-                isTimerRunning = false;
-                timeLeftMillis = 0;
-                updateTimerText();
-                updateProgressBar();
-                binding.btnStartPause.setText(getString(R.string.start));
-                triggerAlarm();
-            }
-        }.start();
-
-        isTimerRunning = true;
-        binding.btnStartPause.setText(getString(R.string.pause));
+    @Override
+    public void onTick(long remainingMillis, long totalMillis) {
+        render();
     }
 
-    private void pauseTimer() {
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
+    @Override
+    public void onFinished() {
+        render();
+        triggerAlarm();
+    }
+
+    private void render() {
+        if (binding == null || !isAdded()) return;
+
+        long total = timer.getTotalMillis();
+        long remaining = timer.getRemainingMillis();
+
+        binding.textTimer.setText(formatTime(remaining));
+        binding.pomodoroProgress.setProgress(total > 0 ? (int) ((remaining * 100) / total) : 0);
+        binding.btnStartPause.setText(
+                getString(timer.isRunning() ? R.string.pause : R.string.start));
+
+        applyModeStyling();
+    }
+
+    private void applyModeStyling() {
+        String mode = timer.getMode();
+        if (PomodoroTimer.MODE_SHORT.equals(mode)) {
+            binding.textStatus.setText(getString(R.string.pomodoro_status_short));
+            binding.pomodoroProgress.setIndicatorColor(requireContext().getColor(R.color.lf_pastel_mint_deep));
+        } else if (PomodoroTimer.MODE_LONG.equals(mode)) {
+            binding.textStatus.setText(getString(R.string.pomodoro_status_long));
+            binding.pomodoroProgress.setIndicatorColor(requireContext().getColor(R.color.lf_pastel_lilac_deep));
+        } else {
+            binding.textStatus.setText(getString(R.string.pomodoro_status_focus));
+            binding.pomodoroProgress.setIndicatorColor(requireContext().getColor(R.color.lf_accent));
         }
-        isTimerRunning = false;
-        binding.btnStartPause.setText(getString(R.string.start));
     }
 
-    private void resetTimer() {
-        pauseTimer();
-        timeLeftMillis = totalTimeMillis;
-        updateTimerText();
-        updateProgressBar();
-    }
-
-    private void updateTimerText() {
-        int minutes = (int) (timeLeftMillis / 1000) / 60;
-        int seconds = (int) (timeLeftMillis / 1000) % 60;
-        String timeStr = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
-        binding.textTimer.setText(timeStr);
-    }
-
-    private void updateProgressBar() {
-        int progress = (int) ((timeLeftMillis * 100) / totalTimeMillis);
-        binding.pomodoroProgress.setProgress(progress);
+    private String formatTime(long millis) {
+        int minutes = (int) (millis / 1000) / 60;
+        int seconds = (int) (millis / 1000) % 60;
+        return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
     }
 
     private void triggerAlarm() {
@@ -277,20 +273,20 @@ public class PomodoroFragment extends Fragment {
         sendTimerNotification();
 
         // 4. Show alert dialog to turn off the alarm
-        String title = getString(R.string.timer_finished);
-        String message = currentMode.equals("Focus") ? getString(R.string.take_a_break) : getString(R.string.time_to_focus);
-
+        boolean isFocus = PomodoroTimer.MODE_FOCUS.equals(timer.getMode());
         if (getActivity() != null) {
             new MaterialAlertDialogBuilder(requireActivity())
-                    .setTitle(title)
-                    .setMessage(message)
+                    .setTitle(getString(R.string.timer_finished))
+                    .setMessage(getString(isFocus ? R.string.take_a_break : R.string.time_to_focus))
                     .setCancelable(false)
-                    .setPositiveButton("OK", (dialog, which) -> stopAlarm())
+                    .setPositiveButton(R.string.ok, (dialog, which) -> stopAlarm())
                     .show();
         }
 
-        // Automatically stop alarm after 15 seconds to prevent continuous ringing
-        binding.getRoot().postDelayed(this::stopAlarm, 15000);
+        // Automatically stop the alarm after 15 seconds to prevent continuous ringing
+        if (binding != null) {
+            binding.getRoot().postDelayed(this::stopAlarm, 15000);
+        }
     }
 
     private void stopAlarm() {
@@ -325,12 +321,13 @@ public class PomodoroFragment extends Fragment {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
-        String message = currentMode.equals("Focus") ? getString(R.string.pomodoro_done_focus) : getString(R.string.pomodoro_done_break);
+        boolean isFocus = PomodoroTimer.MODE_FOCUS.equals(timer.getMode());
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_timer)
                 .setContentTitle(context.getString(R.string.pomodoro_notification_title))
-                .setContentText(message)
+                .setContentText(context.getString(
+                        isFocus ? R.string.pomodoro_done_focus : R.string.pomodoro_done_break))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_ALARM)
                 .setAutoCancel(true)
@@ -340,11 +337,18 @@ public class PomodoroFragment extends Fragment {
         manager.notify(999, builder.build());
     }
 
+    private static String textOf(@Nullable TextInputEditText editText) {
+        return editText == null || editText.getText() == null
+                ? ""
+                : editText.getText().toString().trim();
+    }
+
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
-        pauseTimer();
+        // Detach only: the session keeps running so switching tabs preserves it.
+        timer.setListener(null);
         stopAlarm();
+        super.onDestroyView();
         binding = null;
     }
 }

@@ -35,10 +35,12 @@ Settings/About. Fully offline — no networking, no Firebase, no remote API.
 - `notification/` — `AlarmReceiver`, `BootReceiver` (re-registers alarms on boot), `NotificationHelper`
 - `ui/` — `TasksFragment`, `NotesFragment`, `CalendarFragment`, `PomodoroFragment`, `SettingsFragment`,
   `ProfileFragment`, `PasswordManagerFragment`, `AboutFragment`, `ArchiveTasksFragment`,
-  `ArchiveNotesFragment` and adapters (`TaskAdapter`, `NoteAdapter`, `PasswordAdapter;` archive
-  screens use their own inner adapters)
+  `ArchiveNotesFragment` and adapters (`TaskAdapter`, `NoteAdapter`, `PasswordAdapter`; archive
+  screens use their own inner adapters). `TaskDialogHelper` holds the shared task dialog, delete
+  confirmation and share sheet used by both Tasks and Calendar.
 - `util/` — `SecurityUtil` (KeyStore crypto; encrypt returns ciphertext + base64 IV per entry),
-  `PdfExportUtil` (PdfDocument → MediaStore/Documents dir), `AnimUtil` (list fade-in polish)
+  `PdfExportUtil` (PdfDocument → MediaStore/Documents dir), `AnimUtil` (list fade-in polish),
+  `AlarmScheduler` (the one scheduling implementation), `PomodoroTimer` (process-scoped session)
 - `res/` — layouts, menus, drawables, `values/` + `values-night/` (dark mode uses parallel
   colors.xml/themes.xml)
 
@@ -59,19 +61,15 @@ Settings/About. Fully offline — no networking, no Firebase, no remote API.
   SecurityException fallback; PendingIntent codes `(int) task.getId()`,
   `FLAG_UPDATE_CURRENT | FLAG_IMMUTABLE`. Always cancel alarms on complete/edit/delete/archive;
   re-schedule on undo/restore when a future deadline exists.
+- Task dialogs, delete confirmation and share go through `TaskDialogHelper`, Pomodoro state through
+  `PomodoroTimer`, alarms through `AlarmScheduler` — never duplicate that logic inside a fragment.
 - Room is the only annotation processor + ViewBinding only — don't add libraries without good reason.
 
 ## Known issues
 
-- `BootReceiver` re-registers alarms on a plain executor **without `goAsync()`** — alarms may not
-  survive reboot if the process is killed mid-work.
-- `ArchiveTasksFragment.restoreTask()` doesn't re-schedule the task's deadline alarm.
-- `PomodoroFragment` state is held only in the fragment — switching tabs resets the running timer.
-- `TasksFragment` and `CalendarFragment` duplicate ~200 lines: add/edit task dialog, date/time
-  picker, category mapping, and scheduleAlarm/cancelAlarm helpers.
-- Profile, About, and the Archive screens, plus the add/edit dialogs, still use the older iOS
-  styling instead of the `lf_*` soft-and-airy design tokens.
-
-> **Status at HEAD:** `goAsync()`, `restoreTask()` alarm re-scheduling and the `lf_*` migration for
-> Profile/About/Archive/dialogs are already done. Still open: the Pomodoro reset and the duplicated
-> task dialog in `TasksFragment`/`CalendarFragment` (alarm helpers now live in `util/AlarmScheduler`).
+- Pomodoro state is process-scoped (`util/PomodoroTimer`): a session survives tab switches but is
+  lost if the process is killed, and no alarm dialog appears if no Pomodoro screen is attached (the
+  notification still fires).
+- Exact alarms degrade to inexact (`setAndAllowWhileIdle`) when `SCHEDULE_EXACT_ALARM` is denied, so
+  deadline reminders can fire late.
+- No LiveData/ViewModel layer: writes re-query the DAO and refresh lists manually.
